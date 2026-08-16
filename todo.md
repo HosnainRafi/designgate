@@ -194,3 +194,10 @@
 - [x] Add a documented update-and-push procedure and push each validated documentation update to GitHub
 - [x] Validate documentation links, package commands, tests, build, and repository synchronization
 - [x] Save the final documentation checkpoint and provide the completed guide
+
+## Critical remediation audit
+
+- [x] Re-audit and, if needed, wire standalone Tier B vision grading into the open `designgate loop --grade` path with retry feedback and tests
+- [x] Verify and update the public GitHub repository name, description, homepage, and discovery topics
+- [x] Add genuine visual proof, a sample report, and truthful npm/license/CI badges to README.md
+- [ ] Run full validation, push the remediation branch, merge into protected main, restore protection, and save a final checkpoint

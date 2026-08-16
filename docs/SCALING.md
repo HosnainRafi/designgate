@@ -2,7 +2,7 @@
 
 DesignGate is intentionally useful as a single `npx` command today. This document explains how to evolve it into a maintainable, multi-project quality-gate platform without obscuring the current portable workflow.
 
-> **Current state:** the public CLI is a deliberately compact ESM implementation in `cli/designgate.mjs`. The modular layout below is a staged architecture target, not a claim that every module has already been extracted.
+> **Current state:** the public CLI is a deliberately compact ESM implementation in `cli/designgate.mjs`. Standalone Tier B vision grading is already available through `designgate grade`, `designgate check --grade`, and `designgate loop --grade`; it sends local mobile/tablet/desktop captures to the configured Claude-compatible endpoint and feeds exact visual critique back into the bounded generator loop. The modular layout below is a staged architecture target, not a claim that every module has already been extracted.
 
 ## Architecture target
 
@@ -89,6 +89,8 @@ The existing relational model of runs, iterations, and rubric configurations sho
 Use migrations for every schema alteration, backfill in bounded batches, and avoid destructive changes to evidence metadata. Database backups do not replace object-storage lifecycle management.
 
 ## Tier B vision-grading strategy
+
+The current release provides a local Anthropic-compatible implementation for the open CLI loop. This section describes the next scaling step: extracting that working path behind a provider-agnostic interface so hosted workers and additional providers can share the same immutable rubric and capture contracts.
 
 Vision grading should be provider-agnostic. Implement a provider interface that receives the same immutable rubric and ordered capture manifest.
 
