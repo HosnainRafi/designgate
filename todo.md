@@ -91,4 +91,4 @@
 
 ## Final release preservation
 
-- [ ] Save the audited npm-renderer-CI package state in a final checkpoint
+- [x] Save the audited npm-renderer-CI package state in a final checkpoint
