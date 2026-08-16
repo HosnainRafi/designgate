@@ -67,6 +67,18 @@ describe("installable DesignGate CLI", () => {
     expect(report.checks.find((check: { id: string }) => check.id === "DG-MOTION-001").evidence).toContain("motion");
   });
 
+  it("does not let Markdown documentation prose create a false color-rule failure", () => {
+    const root = mkdtempSync(join(tmpdir(), "designgate-doc-prose-")); created.push(root);
+    mkdirSync(join(root, "src/components"), { recursive: true });
+    writeFileSync(join(root, "src/components/App.css"), "font-family:Avenir;--background:#111;display:grid;gap:1rem;transition:opacity;@media (min-width:768px){}@media (prefers-reduced-motion:reduce){}focus-visible aria-label;");
+    writeFileSync(join(root, "README.md"), "Documentation may explain why a generic purple-to-pink treatment is prohibited.");
+    run(["init", root]);
+    writeFileSync(join(root, ".designgate/latest-capture.json"), JSON.stringify({ engine: "playwright-chromium", captures: [] }));
+    try { run(["verify", root]); } catch { /* inspect the persisted report for the focused color-rule assertion */ }
+    const report = JSON.parse(readFileSync(join(root, ".designgate/report.json"), "utf8"));
+    expect(report.checks.find((check: { id: string; applied: boolean }) => check.id === "DG-COLOR-001").applied).toBe(true);
+  });
+
   it("emits concise exact feedback in compatibility loop mode", () => {
     const root = mkdtempSync(join(tmpdir(), "designgate-loop-")); created.push(root);
     run(["init", root, "--agent", "generic"]);

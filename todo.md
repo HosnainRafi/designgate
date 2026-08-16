@@ -148,7 +148,8 @@
 
 ## Comprehensive documentation and scalable adoption (active tracking)
 
-- [ ] Fix the protected-branch `verify-ui` workflow so pnpm is available before `actions/setup-node` enables the pnpm cache
+- [x] Fix the protected-branch `verify-ui` workflow so pnpm is available before `actions/setup-node` enables the pnpm cache
+- [x] Prevent Markdown documentation text from causing false deterministic UI-rule failures in the protected `verify-ui` workflow
 - [x] Create a full product guide explaining DesignGate architecture, commands, evidence flow, grading loop, reports, and safeguards
 - [x] Create an AutoClaw Desktop guide for installing and using DesignGate on any website or software project
 - [x] Document agent adapters, native instruction files, presets, loop integration, and old-model operating mode
