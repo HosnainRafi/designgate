@@ -52,3 +52,16 @@ Use this skill when a user asks to create, redesign, inspect, verify, or improve
 - Do not place `ANTHROPIC_API_KEY` in prompts, source files, or reports. A requested `--grade` without that key must fail safely rather than silently skipping Tier B.
 
 For detailed commands, dashboard evidence import, supported adapters, and safeguards, read [`docs/GUIDE.md`](docs/GUIDE.md). For the desktop-agent workflow, read [`docs/AUTOCLAW_DESKTOP.md`](docs/AUTOCLAW_DESKTOP.md).
+
+
+## Immersive 3D and Goal Mode
+
+For a browser-rendered 3D project, initialize the additive preset before generation:
+
+```bash
+npx designgate@latest init . --agent generic --preset gaming-3d
+npx designgate@latest plan "Build a multiplayer 3D game with a cinematic lobby" --project .
+npx designgate@latest build "Build a multiplayer 3D game with a cinematic lobby" --generator "npm run agent:generate" --project . --target http://localhost:3000 --grade
+```
+
+Goal Mode supports `gaming`, `portfolio`, and `ecommerce`. Unknown categories must fail explicitly. The generated goal brief and Phase-0 project context must be passed to the generator before its first attempt. When `immersive3d` is active, preserve the canvas/WebGL, supported-dependency, depth, interaction, performance, and conditional `immersiveness` evidence in the report. Legacy projects without the preset continue to use the standard rules and five Tier B dimensions.

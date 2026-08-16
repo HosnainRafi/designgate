@@ -12,3 +12,17 @@ OpenClaw documents skills as directories containing a `SKILL.md` file with YAML 
 
 Source: [OpenClaw Skills documentation](https://docs.openclaw.ai/tools/skills)
 
+
+## Current Dashboard Visual Evidence
+
+A fresh managed-preview capture verified the DesignGate dashboard is rendering at the restored stable checkpoint. The visible product framing includes the quality-enforcement headline, run metrics, installable-agent panel, and supported harness adapters. This capture is suitable as authentic README evidence after the updated feature work is validated.
+
+Preview route: `/` at the managed DesignGate development URL captured on 2026-08-16.
+
+## Updated Brief Implementation Notes
+
+The additive implementation scaffold now includes `rules/extensions/immersive3d.json`, `config/goal-categories.json`, a `gaming-3d` preset, extension-aware browser evidence, conditional Tier B immersiveness scoring, and Goal Mode planner/build command paths. Legacy projects continue to use the original base manifest and five Tier B dimensions when immersive3d is disabled.
+
+The next validation focus is the renderer/browser contract, CLI tests for the new commands, documentation coverage, and end-to-end package behavior.
+
+Source: `/home/ubuntu/upload/designgate-my-project-idea(1).md`.

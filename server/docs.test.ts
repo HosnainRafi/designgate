@@ -17,7 +17,7 @@ describe("DesignGate documentation and OpenClaw skill contract", () => {
     const guide = read("docs/GUIDE.md");
     for (const value of ["Tier A", "Tier B", "variance", "motion", "density", "assetDependence", "brandFidelity", "designgate.config.json", "390 × 844", "834 × 1112", "1440 × 1000", "verbatim"]) expect(guide).toContain(value);
     expect(guide).toContain("runs/<runId>/iteration-<iteration>/");
-    for (const value of ["loop --grade", "ANTHROPIC_API_KEY", "claude-sonnet-4-6", "DESIGNGATE_ANTHROPIC_MODEL", "project-context.json", "schemaVersion: \"1.3.0\""]) expect(guide).toContain(value);
+    for (const value of ["loop --grade", "ANTHROPIC_API_KEY", "claude-sonnet-4-6", "DESIGNGATE_ANTHROPIC_MODEL", "project-context.json", "schemaVersion: \"1.3.0\"", "DG-3D-001", "DG-3D-002", "DG-DEPTH-001", "DG-INTERACT-001", "DG-PERF-001", "immersiveness", "designgate@latest plan", "designgate@latest build", "gaming", "portfolio", "ecommerce"]) expect(guide).toContain(value);
   });
 
   it("provides an installable OpenClaw skill with a safe verification workflow", () => {
@@ -30,5 +30,8 @@ describe("DesignGate documentation and OpenClaw skill contract", () => {
     expect(autoclaw).toContain("$designgate");
     expect(autoclaw).toContain("--grade");
     expect(autoclaw).toContain("ANTHROPIC_API_KEY");
+    expect(autoclaw).toContain("gaming-3d");
+    expect(autoclaw).toContain("designgate plan");
+    expect(autoclaw).toContain("designgate@latest build");
   });
 });

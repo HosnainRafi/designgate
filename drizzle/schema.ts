@@ -31,6 +31,8 @@ export const runs = mysqlTable("runs", {
   overallScore: int("overallScore").notNull().default(0),
   currentIteration: int("currentIteration").notNull().default(0),
   rubricConfigId: int("rubricConfigId"),
+  goalMode: text("goalMode"),
+  extensions: text("extensions"),
   latestCritique: text("latestCritique"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
