@@ -14,12 +14,14 @@ pnpm test
 pnpm build
 git add <intended-files>
 git commit -m "docs: describe DesignGate workflow"
-git push origin main
+git switch -c docs/describe-designgate-workflow
+git push -u origin HEAD
+gh pr create --base main --fill
 git status --short
 git log -1 --oneline
 ```
 
-Before pushing, inspect the staged diff and confirm that it contains no secrets, generated browser captures, `.designgate/evidence-import.json`, database dumps, or local environment files. Keep the working tree clean after the push so the repository state is easy to reproduce.
+Before pushing, inspect the staged diff and confirm that it contains no secrets, generated browser captures, `.designgate/evidence-import.json`, database dumps, or local environment files. The public `main` branch is protected, so merge only a passing reviewed pull request. Keep the working tree clean after the push so the repository state is easy to reproduce.
 
 ## Evidence-import operations
 
@@ -87,7 +89,7 @@ npx designgate@latest rules .
 
 `init` creates `.github/workflows/designgate.yml`. The `verify-ui` job installs Chromium and DesignGate, renders a target only when the repository variable `DESIGNGATE_TARGET` is populated, runs verification, and uploads `.designgate/` as an artifact.
 
-Configure branch protection for `main` in GitHub **Settings → Branches**. Require pull requests, one approving review, dismissal of stale approvals, resolved conversations, linear history, the `verify-ui` status check, and protection against force pushes and deletion.
+The public `main` branch is protected with pull requests, one approving review, dismissal of stale approvals, resolved conversations, linear history, the `verify-ui` status check, administrator enforcement, and protection against force pushes and deletion. Apply the same policy to a fork or downstream repository in GitHub **Settings → Branches**.
 
 The repository includes an administrator helper:
 
@@ -95,7 +97,7 @@ The repository includes an administrator helper:
 GITHUB_TOKEN=ghp_... npm run github:protect
 ```
 
-The token must have repository-administration permission. The current repository automation credential has previously returned `403 Resource not accessible by personal access token` for this administrative API, so pushing code is possible but enabling branch protection through that token is not. In that state, apply the policy manually in GitHub Settings or use a token created by a repository administrator with the correct permission.
+The token must have repository-administration permission. If an automation credential lacks that permission, apply the policy manually in GitHub Settings or use a token created by a repository administrator with the correct permission.
 
 Never commit personal access tokens, npm tokens, or other credentials to the repository, documentation, screenshots, test fixtures, issue comments, or shell history.
 
@@ -108,6 +110,7 @@ git diff --check
 pnpm check
 pnpm test
 pnpm build
+pnpm validate:docs
 git status --short
 ```
 
@@ -123,13 +126,25 @@ Then inspect the branch relationship and synchronize only the intended commits:
 git fetch origin
 git status -sb
 git log --oneline origin/main..HEAD
-git push origin main
+gh pr create --base main --fill
 git status -sb
 ```
+
+## Repository rename and migration
+
+The canonical repository is now **[HosnainRafi/designgate](https://github.com/HosnainRafi/designgate)**. GitHub redirects the former `HosnainRafi/AI-fine-graded` URL, but contributors, automation, skill-install commands, package metadata, workflow badges, and documentation should use the new canonical URL to avoid depending on that redirect.
+
+Existing local clones should update their remote once:
+
+```bash
+git remote set-url origin https://github.com/HosnainRafi/designgate.git
+git remote -v
+```
+
+The rename preserves Git history, issues, pull requests, branch protection, and redirects from the previous GitHub URL. It does not publish the npm package: the package remains named `designgate`, and its public-registry status must be checked independently with `npm view designgate version` before advertising a live npm version.
 
 ## Incident boundaries
 
 If a release, worker, evidence store, or database state is uncertain, stop automated retry loops. Preserve sanitized metadata and report versions, revoke or rotate exposed secrets, determine the scope of affected evidence, and recover using the project’s checkpoint/version history or a tested backup procedure. Do not overwrite evidence or delete run records before the incident has been investigated.
 
 For general usage, read [DesignGate Product Guide](GUIDE.md). For AutoClaw Desktop, read [AutoClaw Desktop Integration](AUTOCLAW_DESKTOP.md). For the architecture roadmap, read [Scaling Roadmap](SCALING.md).
-

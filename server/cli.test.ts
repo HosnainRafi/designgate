@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import { existsSync, mkdtempSync, rmSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { tmpdir } from "node:os";
@@ -7,8 +7,23 @@ import { join } from "node:path";
 
 const cli = join(process.cwd(), "cli/designgate.mjs");
 const created: string[] = [];
-const run = (args: string[]) => execFileSync(process.execPath, [cli, ...args], { encoding: "utf8" });
+const run = (args: string[], env: NodeJS.ProcessEnv = process.env) => execFileSync(process.execPath, [cli, ...args], { encoding: "utf8", env });
 afterEach(() => { for (const path of created.splice(0)) rmSync(path, { recursive: true, force: true }); });
+
+async function startVisionServer(root: string) {
+  const script = join(root, "vision-server.mjs");
+  writeFileSync(script, `import { createServer } from "node:http";
+const grade = { variance: { score: 1, note: "Increase hierarchy and distinctiveness." }, motion: { score: 1, note: "Add purposeful motion cues." }, density: { score: 1, note: "Improve grouping and whitespace." }, assetDependence: { score: 1, note: "Replace generic visual assets." }, brandFidelity: { score: 1, note: "Strengthen the shared brand language." } };
+const server = createServer((request, response) => { let body = ""; request.on("data", chunk => body += chunk); request.on("end", () => { response.writeHead(200, { "content-type": "application/json" }); response.end(JSON.stringify({ content: [{ type: "text", text: JSON.stringify(grade) }] })); }); });
+server.listen(0, "127.0.0.1", () => console.log(server.address().port));`);
+  const child = spawn(process.execPath, [script], { stdio: ["ignore", "pipe", "inherit"] });
+  const port = await new Promise<string>((resolve, reject) => {
+    const timeout = setTimeout(() => reject(new Error("Timed out starting mock vision server.")), 5000);
+    child.once("error", reject);
+    child.stdout.once("data", buffer => { clearTimeout(timeout); resolve(String(buffer).trim()); });
+  });
+  return { baseUrl: `http://127.0.0.1:${port}`, stop: () => child.kill() };
+}
 
 describe("installable DesignGate CLI", () => {
   it("declares a minimal publishable npm package contract", () => {
@@ -90,5 +105,46 @@ describe("installable DesignGate CLI", () => {
     writeFileSync(join(root, "generator.mjs"), "import { writeFileSync } from 'node:fs'; writeFileSync('agent-feedback.txt', process.argv.slice(2).join(' '));");
     try { run(["loop", root, "--generator", `${process.execPath} generator.mjs`, "--max-iterations", "1"]); } catch { /* expected when the target is not yet compliant */ }
     expect(readFileSync(join(root, "agent-feedback.txt"), "utf8")).toContain("DesignGate exact feedback:");
+  });
+
+  it("detects reusable project context during initialization", () => {
+    const root = mkdtempSync(join(tmpdir(), "designgate-context-")); created.push(root);
+    mkdirSync(join(root, "src/components"), { recursive: true });
+    writeFileSync(join(root, "src/components/Button.tsx"), "export function Button() { return <button>Save</button>; }");
+    writeFileSync(join(root, "src/tokens.css"), ":root { --brand-ink: #111; --surface-panel: #fff; }");
+    run(["init", root]);
+    const context = JSON.parse(readFileSync(join(root, ".designgate/project-context.json"), "utf8"));
+    expect(context.designTokens).toEqual(expect.arrayContaining(["--brand-ink", "--surface-panel"]));
+    expect(context.reusableComponents).toContain("Button");
+  });
+
+  it("runs inline Tier B vision grading inside the bounded loop and passes exact visual critique to the generator", async () => {
+    const root = mkdtempSync(join(tmpdir(), "designgate-tier-b-")); created.push(root);
+    mkdirSync(join(root, "src/components"), { recursive: true });
+    writeFileSync(join(root, "src/components/Card.tsx"), "export const Card = () => null;");
+    const html = join(root, "index.html");
+    writeFileSync(html, "<style>:root{--background:#111}body{font-family:Arial;display:grid;gap:1rem;transition:opacity}@media (max-width:700px){body{padding:1rem}}@media (prefers-reduced-motion:reduce){*{transition:none}}</style><button aria-label='quality'>Render</button>");
+    run(["init", root]);
+    writeFileSync(join(root, "generator.mjs"), "import { appendFileSync } from 'node:fs'; appendFileSync('tier-b-feedback.txt', process.argv.slice(2).join(' ') + '\\n---\\n');");
+    const mock = await startVisionServer(root);
+    try {
+      try { run(["loop", root, "--generator", `${process.execPath} generator.mjs`, "--grade", "--target", html, "--max-iterations", "1"], { ...process.env, ANTHROPIC_API_KEY: "test-key", ANTHROPIC_BASE_URL: mock.baseUrl }); } catch { /* expected because mock visual scores are below the configured threshold */ }
+    } finally { mock.stop(); }
+    const report = JSON.parse(readFileSync(join(root, ".designgate/report.json"), "utf8"));
+    const feedback = readFileSync(join(root, "tier-b-feedback.txt"), "utf8");
+    expect(report.tierB).toMatchObject({ provider: "anthropic", model: "claude-sonnet-4-6", source: "inline-anthropic-vision", evaluatedBreakpoints: ["mobile", "tablet", "desktop"] });
+    expect(report.projectContext.designTokens).toContain("--background");
+    expect(feedback.startsWith("Phase-0 project context")).toBe(true);
+    expect(feedback).toContain("Generate or update the requested interface now.");
+    expect(feedback).toContain("Improve variance: Increase hierarchy and distinctiveness.");
+  });
+
+  it("fails safely with an actionable message when inline vision grading has no Claude API key", () => {
+    const root = mkdtempSync(join(tmpdir(), "designgate-no-key-")); created.push(root);
+    run(["init", root]);
+    const html = join(root, "index.html");
+    writeFileSync(html, "<main>Captured before the credential validation.</main>");
+    run(["render", html, "--project", root]);
+    expect(() => run(["grade", root], { ...process.env, ANTHROPIC_API_KEY: "" })).toThrow(/Inline Tier B grading needs ANTHROPIC_API_KEY/);
   });
 });

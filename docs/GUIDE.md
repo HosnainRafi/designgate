@@ -49,16 +49,17 @@ npx designgate@latest check http://localhost:3000 --project .
 
 ## System architecture
 
-DesignGate has two cooperating layers. The portable package produces source-level verification and browser evidence. The hosted dashboard persists runs, rubric configuration, iteration history, S3 evidence references, and Tier B grading results.
+DesignGate has two cooperating layers. The portable package provides a complete local quality loop: it produces source-level verification, browser evidence, inline Tier B vision grading, and exact feedback for a caller-provided generator. The hosted dashboard is an optional, richer persistence and comparison layer rather than a prerequisite for visual grading.
 
 | Layer | Primary responsibility | Durable output |
 | --- | --- | --- |
-| **Rule package** | Installs agent instructions, captures screenshots, performs deterministic verification, and emits exact feedback. | `designgate.config.json`, `.designgate/manifest.json`, captures, `report.json`. |
+| **Rule package** | Installs agent instructions, detects existing project context, captures screenshots, performs deterministic verification, grades with an explicitly enabled vision API, and emits exact feedback. | `designgate.config.json`, `.designgate/manifest.json`, `.designgate/project-context.json`, captures, `report.json`. |
 | **Renderer** | Uses Playwright Chromium to visit a target with fixed viewports and reduced-motion emulation. | Three full-page PNG files and a capture manifest. |
 | **Tier A verifier** | Inspects project artifacts, the installed manifest, and capture presence. | Per-rule pass/fail evidence, changed-file classification, and a numeric compliance score. |
-| **Hosted dashboard** | Creates runs, stores run configuration and rubric configuration in the database, records iterations, and presents reports. | MySQL/TiDB run, iteration, and rubric records. |
+| **Inline Tier B grader** | When `--grade` is explicitly requested, sends three local captures to a Claude-compatible vision endpoint using the caller’s `ANTHROPIC_API_KEY`. | Dimension scores, notes, weighted score, and exact generator-facing instructions in `report.json`. |
+| **Hosted dashboard** | Optionally creates runs, stores run configuration and rubric configuration in the database, records iterations, and presents reports. | MySQL/TiDB run, iteration, and rubric records. |
 | **Evidence storage** | Stores imported screenshot bytes outside the database. | S3 objects at `runs/<runId>/iteration-<iteration>/…` and URLs/metadata on the iteration. |
-| **Tier B grader** | Grades screenshot evidence against the configured visual rubric and returns critiques. | Dimension scores, notes, and exact generator-facing instructions. |
+| **Hosted Tier B grader** | Grades imported screenshot evidence against the configured visual rubric and returns critiques. | Dimension scores, notes, and exact generator-facing instructions. |
 
 The source package intentionally keeps the generator separate. It does not require a particular LLM provider, model family, IDE, or framework. The caller supplies the generator command only when using the bounded loop.
 
@@ -90,7 +91,7 @@ The command recursively reads text-bearing project artifacts while excluding `no
 
 ## Tier B vision grading
 
-Tier B is the dashboard’s screenshot-based grading layer. It considers the captured interface in context of the saved rubric rather than treating CSS text as proof of visual quality. The dashboard stores each rubric configuration in the database, associates it with a run, and retains iteration-level output for comparison.
+Tier B is available directly from the public CLI and through the optional hosted dashboard. The standalone path considers screenshots rather than treating CSS text as proof of visual quality; it does **not** require a database, S3 bucket, or dashboard run. The hosted dashboard remains useful when teams need persisted run history, rubric administration, S3 evidence import, and side-by-side iteration comparison.
 
 The current grading contract surfaces these exact dimension names:
 
@@ -104,7 +105,23 @@ The current grading contract surfaces these exact dimension names:
 
 > Tier B should be read as a structured review signal. It is not an objective proof of accessibility, legal compliance, trademark clearance, or fitness for a high-stakes domain.
 
-The dashboard score view, critique viewer, and iteration history are designed to preserve the relationship between a capture, its rubric, its Tier A checks, and its Tier B outcome. **Fix instructions shown by the critique viewer must be forwarded to the generator verbatim.** Do not summarize or paraphrase them; the text is the review contract for the next iteration.
+The dashboard score view, critique viewer, and iteration history preserve the relationship between a capture, its rubric, its Tier A checks, and its Tier B outcome. The standalone CLI writes the equivalent Tier B object to `.designgate/report.json`. **Fix instructions shown by the critique viewer or emitted in the CLI report must be forwarded to the generator verbatim.** Do not summarize or paraphrase them; the text is the review contract for the next iteration.
+
+### Standalone Claude-compatible grading
+
+Set `ANTHROPIC_API_KEY` in the shell that runs the CLI, then request grading explicitly. DesignGate submits only the three rendered PNG captures and the fixed grading prompt to the configured Anthropic-compatible endpoint. It uses `https://api.anthropic.com` by default; set `ANTHROPIC_BASE_URL` only when intentionally using a compatible proxy. The public Anthropic Messages API is documented by Anthropic. [3]
+
+```bash
+export ANTHROPIC_API_KEY="your-key"
+
+# Render, Tier A verify, and Tier B grade a target in one standalone command.
+npx designgate@latest check http://localhost:3000 --project . --grade
+
+# Grade existing mobile/tablet/desktop captures.
+npx designgate@latest grade .
+```
+
+If `ANTHROPIC_API_KEY` is absent, `--grade` and `grade` stop before making a network request and print an actionable setup message. They do not silently downgrade a requested visual-quality gate into Tier A-only verification.
 
 ## Evidence and persistence
 
@@ -166,6 +183,19 @@ npx designgate@latest init . --agent generic --preset component-library
 npx designgate@latest rules .
 ```
 
+### Phase-0 project context detection
+
+`init` and `context` write `.designgate/project-context.json`. The inventory records discovered CSS custom-property tokens and reusable components under project component directories. A graded loop forwards that inventory to the generator **before its first generation attempt**, instructing it to reuse the project’s existing tokens and primitives rather than inventing a visually conflicting replacement.
+
+```bash
+npx designgate@latest context .
+npx designgate@latest loop . \
+  --generator "npm run agent:fix" \
+  --grade --target http://localhost:3000
+```
+
+Context detection is an inventory, not an architectural migration tool. Review its output when a repository uses unconventional file locations or generated design-token files.
+
 ### Compatibility workflow for older models
 
 Older or lower-capability coding models benefit from a smaller, ordered task. Use the generated native instruction file and require the model to complete one iteration at a time.
@@ -183,18 +213,18 @@ This approach avoids asking a weaker model to interpret a broad statement such a
 
 ### Report shape
 
-`verify` and `check` write `.designgate/report.json`. The output uses `schemaVersion: "1.2.0"` and includes a project target, timestamp, score, pass state, capture metadata when available, and per-rule checks.
+`verify` writes a Tier A-only `schemaVersion: "1.2.0"` report. `check --grade`, `grade`, and `loop --grade` write a combined `schemaVersion: "1.3.0"` report with Tier A, Tier B, the Phase-0 project context, capture metadata, and exact feedback.
 
 ```json
 {
-  "schemaVersion": "1.2.0",
+  "schemaVersion": "1.3.0",
   "target": "/workspace/product",
   "score": 78,
   "passed": false,
   "ruleSet": "designgate-modern-ui",
   "manifestVersion": "1.1.0",
   "capture": { "engine": "playwright-chromium", "captures": [] },
-  "checks": [
+  "tierA": { "score": 78, "passed": false, "checks": [
     {
       "id": "DG-MOTION-001",
       "required": true,
@@ -204,7 +234,16 @@ This approach avoids asking a weaker model to interpret a broad statement such a
       "agentOutputMatching": true,
       "detail": "Missing concrete evidence for DG-MOTION-001; exact instruction: …"
     }
-  ]
+  ] },
+  "tierB": {
+    "provider": "anthropic",
+    "model": "claude-sonnet-4-6",
+    "evaluatedBreakpoints": ["mobile", "tablet", "desktop"],
+    "overallScore": 3.2,
+    "passed": false,
+    "dimensions": { "variance": { "score": 2, "note": "…" } },
+    "critique": "Improve variance: …"
+  }
 }
 ```
 
@@ -212,18 +251,24 @@ The literal `detail` property is the exact feedback string. Consumers should pre
 
 ### Bounded loop pseudocode
 
-The built-in loop is intentionally simple and bounded.
+The Tier A-only loop is intentionally simple and bounded. Add `--grade --target <url-or-local-html>` to activate the complete standalone visual-quality loop.
 
 ```text
+context = detect existing tokens and reusable components
+send context to the generator before its first generation attempt
+
 for iteration in 1..maxIterations:
-    report = verify(project)
+    capture mobile, tablet, desktop screenshots
+    tierA = verify(project)
+    tierB = grade screenshots with Claude-compatible vision API
+    report = combine(tierA, tierB, context)
     persist report.json
-    if every required check passes:
+    if every required Tier A check and Tier B threshold passes:
         stop successfully
 
-    exactFeedback = join(failed required check.detail)
+    exactFeedback = join(failed Tier A check.detail, failed Tier B critique)
     run the caller-provided generator command with:
-        "DesignGate exact feedback:" + exactFeedback
+        Phase-0 context + "DesignGate exact feedback:" + exactFeedback
 
 exit non-zero after the limit
 ```
@@ -233,6 +278,7 @@ Run it only with a generator command that you trust and understand.
 ```bash
 npx designgate@latest loop . \
   --generator "npm run agent:fix" \
+  --grade --target http://localhost:3000 \
   --max-iterations 5
 ```
 
@@ -244,9 +290,15 @@ The configuration file provides the persistent defaults and expected policy surf
   "maxIterations": 5,
   "preset": "react",
   "tierA": {},
-  "tierB": { "gradingModel": "auto" }
+  "tierB": {
+    "provider": "anthropic",
+    "gradingModel": "auto",
+    "useProjectContext": true
+  }
 }
 ```
+
+`gradingModel: "auto"` is not an opaque hosted setting. In the standalone CLI it resolves to `DESIGNGATE_ANTHROPIC_MODEL` when that environment variable is set; otherwise it resolves to `claude-sonnet-4-6`. Pass `--model <model-id>` to override either value for one command. `tierB.provider` currently accepts `"anthropic"` only. `--grade` requires `ANTHROPIC_API_KEY`; no key means no API request and a non-zero exit.
 
 The CLI loop accepts `--max-iterations`; treat `designgate.config.json` as the project’s auditable policy record and keep its value aligned with the invocation used in CI or automation.
 
@@ -258,11 +310,14 @@ The CLI loop accepts `--max-iterations`; treat `designgate.config.json` as the p
 | Native instruction copies | Every supported agent receives the same versioned contract, rather than an undocumented prompt fragment. |
 | Real browser evidence | Screenshots are captured from a target URL or HTML file instead of being self-reported by the generator. |
 | Three fixed breakpoints | Responsive inspection has a repeatable baseline across mobile, tablet, and desktop. |
+| Explicit network opt-in | Tier B sends screenshots to a vision provider only when the caller requests `--grade` and supplies `ANTHROPIC_API_KEY`. |
+| Transient-failure handling | The standalone grader retries one transient provider failure with backoff and makes one strict JSON repair request for malformed model output. |
+| Phase-0 context handoff | Existing tokens and components are presented before first-generation work to reduce duplicate or clashing primitives. |
 | Exact critique relay | Generator feedback is not weakened by human or agent paraphrasing between iterations. |
 | Bounded retries | The loop terminates after a deliberate cap instead of continuously editing a project. |
 | Database/S3 separation | Run and rubric metadata remain queryable; large evidence assets remain in object storage. |
 
-DesignGate does **not** automatically deploy an application, make arbitrary network calls on behalf of a generator, guarantee a design is original, or bypass human review. Review all third-party assets, model output, credentials, generated code, and production changes before release.
+DesignGate does **not** automatically deploy an application, make arbitrary network calls on behalf of a generator, guarantee a design is original, or bypass human review. A caller may explicitly opt into the documented Tier B provider call with `--grade`; review all third-party assets, model output, credentials, generated code, and production changes before release.
 
 For operational procedures, see [Operations and Release Guide](OPERATIONS.md). For the AutoClaw Desktop workflow, see [AutoClaw Desktop Integration](AUTOCLAW_DESKTOP.md). For the planned modular scaling architecture and reference-project mapping, see [Scaling Roadmap](SCALING.md).
 
@@ -271,3 +326,5 @@ For operational procedures, see [Operations and Release Guide](OPERATIONS.md). F
 [1] [OpenClaw Skills documentation](https://docs.openclaw.ai/tools/skills) explains the `SKILL.md` model, workspace precedence, Git installation syntax, explicit `$skill` references, and the need to review third-party skills before enabling them.
 
 [2] [AutoClaw](https://autoclaw.z.ai/) describes the desktop agent’s browser automation and web-product-building capabilities used in the integration workflow.
+
+[3] [Anthropic Messages API](https://docs.anthropic.com/en/api/messages) documents the API endpoint and image-message format used by the optional standalone vision-grading path.

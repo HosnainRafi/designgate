@@ -6,7 +6,7 @@ describe("release operations contract", () => {
   it("declares public npm metadata and release checks", () => {
     const packageJson = JSON.parse(readFileSync(join(process.cwd(), "package.json"), "utf8"));
     expect(packageJson.publishConfig.access).toBe("public");
-    expect(packageJson.repository.url).toContain("AI-fine-graded");
+    expect(packageJson.repository.url).toContain("HosnainRafi/designgate");
     expect(packageJson.scripts["release:check"]).toContain("release:pack-json");
     expect(packageJson.scripts["release:pack-json"]).toContain("npm pack --dry-run --json --ignore-scripts");
     expect(packageJson.scripts["github:protect"]).toContain("scripts/protect-main.mjs");
