@@ -1,0 +1,11 @@
+{
+  "id": "nextjs",
+  "name": "Next.js UI Quality",
+  "extends": "designgate-modern-ui",
+  "description": "Rules for Next.js App Router and Pages Router projects with clear rendering boundaries and production metadata.",
+  "rules": [
+    { "id": "NEXT-BOUNDARY-001", "instruction": "Keep browser-only interaction and APIs inside client components; keep data fetching and stable content on the server where appropriate." },
+    { "id": "NEXT-STATE-001", "instruction": "Provide loading, error, not-found, and empty states for routes and async UI instead of rendering blank shells." },
+    { "id": "NEXT-META-001", "instruction": "Define meaningful page metadata, document titles, and social-preview content for the interface being shipped." }
+  ]
+}

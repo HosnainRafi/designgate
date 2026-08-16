@@ -118,3 +118,18 @@
 - [x] Confirm write permission for HosnainRafi/AI-fine-graded
 - [x] Push the complete DesignGate main branch if authorized
 - [x] Verify the remote branch and repository contents or document the exact permission fix required
+
+## Release operations and framework presets
+
+- [x] Add React, Next.js, Vue, and component-library preset manifests with tailored rules and prompts
+- [x] Add preset selection to CLI init/rules/verify flows and document usage
+- [x] Add npm publication readiness checks, version/release scripts, and clean-project smoke coverage
+- [x] Add GitHub Actions quality-gate workflow and required-check documentation
+- [ ] Configure branch protection on HosnainRafi/AI-fine-graded when the token grants administration permission
+- [x] Run typecheck, tests, build, npm dry-run, and clean-project `npx designgate init .` validation
+- [x] Save the final release-operations checkpoint
+
+## Release-operations validation gaps
+
+- [x] Run pnpm build after the preset, workflow, npm metadata, and branch-protection helper changes
+- [ ] Save a new checkpoint after release-operations validation is complete

@@ -1,0 +1,11 @@
+{
+  "id": "component-library",
+  "name": "Component Library Quality",
+  "extends": "designgate-modern-ui",
+  "description": "Rules for shared component libraries and design-system packages that must stay composable, consistent, and accessible by default.",
+  "rules": [
+    { "id": "LIB-API-001", "instruction": "Keep component APIs predictable and composable; document variants, defaults, keyboard behavior, and controlled/uncontrolled usage." },
+    { "id": "LIB-TOKEN-001", "instruction": "Keep colors, spacing, radii, type, and motion in shared tokens; do not hardcode one-off values inside primitives." },
+    { "id": "LIB-A11Y-001", "instruction": "Make accessibility behavior part of the primitive default, including names, focus management, keyboard controls, and reduced motion." }
+  ]
+}

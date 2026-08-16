@@ -1,0 +1,11 @@
+{
+  "id": "vue",
+  "name": "Vue UI Quality",
+  "extends": "designgate-modern-ui",
+  "description": "Rules for Vue 3 interfaces using components, composables, and accessible reactive states.",
+  "rules": [
+    { "id": "VUE-COMP-001", "instruction": "Keep reusable visual patterns in focused Vue components and share cross-view behavior through composables." },
+    { "id": "VUE-STATE-001", "instruction": "Expose loading, error, empty, and success states explicitly in templates; do not rely on hidden reactive fallbacks." },
+    { "id": "VUE-MOTION-001", "instruction": "Use Vue transition primitives for purposeful entrance and state motion, with reduced-motion behavior preserved." }
+  ]
+}

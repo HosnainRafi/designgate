@@ -56,7 +56,7 @@ The repository is configured as a public package with a `bin` entrypoint and a `
 pnpm install
 pnpm test
 pnpm build
-pnpm pack --dry-run
+pnpm pack --dry-run --json --ignore-scripts
 npm login
 npm publish --access public
 ```
@@ -70,3 +70,54 @@ The generated instructions are **layered and deterministic**: inspect, apply tok
 ## Rule contract
 
 Each portable rule has a stable ID, category, required/optional status, exact instruction payload, and cryptographic payload hash. Core coverage includes typography, semantic color, layout hierarchy, motion, responsive behavior, accessibility, asset discipline, component reuse, and completion verification.
+
+## Framework presets
+
+DesignGate can install the portable core rules plus a framework-specific preset:
+
+```bash
+npx designgate@latest init . --preset react
+npx designgate@latest init . --preset nextjs
+npx designgate@latest init . --preset vue
+npx designgate@latest init . --preset component-library
+npx designgate@latest rules .
+```
+
+The selected preset is recorded in `.designgate/manifest.json`, included in native agent instruction files, and exposed by `designgate rules` for audit tooling.
+
+## Clean-project npm smoke test
+
+Before publishing a release, run the repository checks and validate the actual package contents:
+
+```bash
+pnpm check
+pnpm test
+npm pack --dry-run --json --ignore-scripts
+```
+
+Then test the command shape in an empty directory:
+
+```bash
+mkdir /tmp/designgate-clean && cd /tmp/designgate-clean
+npx designgate@latest init . --preset react
+npx designgate@latest rules .
+```
+
+Publishing requires an npm account with permission for the package name:
+
+```bash
+npm login
+npm publish --access public
+```
+
+## Branch protection
+
+The generated workflow exposes the `verify-ui` check. In GitHub, protect `main` by requiring pull requests, at least one approval, passing status checks including `verify-ui`, stale-review dismissal, conversation resolution, linear history, and blocking force pushes and branch deletion. Programmatic branch-protection changes require a token with repository administration permission; the current publishing credential can push code but returned `403 Resource not accessible by personal access token` for the protection API, so apply this policy from **Settings → Branches** or use an administrator-scoped token.
+
+For administrators who want to apply the policy by API instead of the GitHub UI:
+
+```bash
+GITHUB_TOKEN=ghp_... npm run github:protect
+```
+
+The token must have repository administration permission. The command requires the `verify-ui` check, one approving review, stale-review dismissal, conversation resolution, linear history, and blocks force pushes and deletion. Override `DESIGNGATE_GITHUB_OWNER`, `DESIGNGATE_GITHUB_REPO`, and `DESIGNGATE_GITHUB_BRANCH` for another repository.

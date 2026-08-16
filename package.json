@@ -7,8 +7,11 @@
   "keywords": ["ai-agents", "design-system", "ui-quality", "playwright", "cli", "code-review"],
   "engines": {"node": ">=20"},
   "publishConfig": {"access": "public"},
+  "repository": {"type": "git", "url": "https://github.com/HosnainRafi/AI-fine-graded.git"},
+  "bugs": {"url": "https://github.com/HosnainRafi/AI-fine-graded/issues"},
+  "homepage": "https://github.com/HosnainRafi/AI-fine-graded#readme",
   "bin": {"designgate": "cli/designgate.mjs"},
-  "files": ["cli", "rules", "adapters", "templates", "README.md", "LICENSE", "designgate.config.json"],
+  "files": ["cli", "rules", "adapters", "templates", "scripts", "README.md", "LICENSE", "designgate.config.json"],
   "scripts": {
     "dev": "NODE_ENV=development tsx watch server/_core/index.ts",
     "build": "vite build && esbuild server/_core/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
@@ -21,7 +24,10 @@
     "designgate:verify": "node cli/designgate.mjs verify .",
     "designgate:render": "node cli/designgate.mjs render",
     "prepack": "pnpm check && pnpm test",
-    "pack:dry-run": "npm pack --dry-run"
+    "pack:dry-run": "npm pack --dry-run",
+    "release:check": "pnpm check && pnpm test && npm run release:pack-json --silent",
+    "release:pack-json": "npm pack --dry-run --json --ignore-scripts",
+    "github:protect": "node scripts/protect-main.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.693.0",
