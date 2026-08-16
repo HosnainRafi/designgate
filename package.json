@@ -11,7 +11,7 @@
   "bugs": {"url": "https://github.com/HosnainRafi/AI-fine-graded/issues"},
   "homepage": "https://github.com/HosnainRafi/AI-fine-graded#readme",
   "bin": {"designgate": "cli/designgate.mjs"},
-  "files": ["cli", "rules", "adapters", "templates", "scripts", "README.md", "LICENSE", "designgate.config.json"],
+  "files": ["cli", "rules", "adapters", "templates", "scripts", "docs", "README.md", "LICENSE", "SKILL.md", "designgate.config.json"],
   "scripts": {
     "dev": "NODE_ENV=development tsx watch server/_core/index.ts",
     "build": "vite build && esbuild server/_core/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",

@@ -2,13 +2,41 @@
 
 DesignGate is an **installable, agent-agnostic UI quality gate**. It gives a coding agent explicit modern-design rules, captures real browser evidence at mobile, tablet, and desktop widths, and verifies project artifacts instead of trusting an agent’s self-report.
 
+## Documentation
+
+| Guide | What it covers |
+| --- | --- |
+| [Product Guide](docs/GUIDE.md) | Architecture, Tier A/Tier B, rule contract, evidence flow, reports, bounded loops, safeguards, and older-model usage. |
+| [AutoClaw Desktop Integration](docs/AUTOCLAW_DESKTOP.md) | Installable OpenClaw skill, `$designgate` prompts, source/npx command paths, and end-to-end website-building workflow. |
+| [Scaling Roadmap](docs/SCALING.md) | Modular CLI target, queue workers, S3, database, vision-grading, security, observability, CI, references, and licensing boundaries. |
+| [Operations and Release Guide](docs/OPERATIONS.md) | Evidence import, troubleshooting, npm publishing, GitHub operations, validation, and branch protection. |
+
+For traceable source material used by the AutoClaw integration guide, see [research notes](docs/research-sources.md).
+
 ## Install into any agent project
 
 ```bash
 npx designgate@latest init . --agent claude-code
 ```
 
+If the package has not yet been published under `designgate`, run the repository source CLI instead:
+
+```bash
+git clone https://github.com/HosnainRafi/AI-fine-graded.git
+node ./AI-fine-graded/cli/designgate.mjs init . --agent claude-code
+```
+
 The initializer writes `designgate.config.json`, an auditable `.designgate/manifest.json`, every compiled adapter under `.designgate/agents/`, native agent instruction files, and `.github/workflows/designgate.yml`.
+
+## AutoClaw Desktop and OpenClaw skill
+
+The repository includes a root `SKILL.md` for OpenClaw-compatible desktop-agent workflows. After reviewing the repository, install it from Git into the active workspace:
+
+```bash
+openclaw skills install git:HosnainRafi/AI-fine-graded@main --as designgate
+```
+
+In AutoClaw, reference `$designgate` in a project-building prompt. The skill tells the agent to install or inspect `designgate.config.json`, apply the native rule contract, capture all three breakpoints, run verification, and relay failed `detail` instructions verbatim to the generator. See the complete [AutoClaw Desktop guide](docs/AUTOCLAW_DESKTOP.md) before enabling a shared/global skill.
 
 | Agent harness | Native instruction file |
 |---|---|

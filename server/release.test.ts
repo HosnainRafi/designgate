@@ -19,6 +19,10 @@ describe("release operations contract", () => {
     expect(existsSync(join(process.cwd(), "scripts/protect-main.mjs"))).toBe(true);
     const workflow = readFileSync(join(process.cwd(), ".github/workflows/designgate.yml"), "utf8");
     expect(workflow).toContain("name: verify-ui");
+    const pnpmSetupStart = workflow.indexOf("uses: pnpm/action-setup@v4");
+    const nodeSetupStart = workflow.indexOf("uses: actions/setup-node@v4");
+    expect(pnpmSetupStart).toBeLessThan(nodeSetupStart);
+    expect(workflow.slice(pnpmSetupStart, nodeSetupStart)).not.toContain("version:");
     expect(workflow).toContain("node cli/designgate.mjs verify .");
   });
 });
