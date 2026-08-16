@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "1.1.0",
+  "ruleSet": "designgate-modern-ui",
+  "version": "2026.08.16",
+  "description": "Portable rules for premium modern web UI, motion, responsive behavior, accessibility, and anti-generic design.",
+  "rules": [
+    {
+      "id": "DG-TYPO-001",
+      "category": "typography",
+      "required": true,
+      "payload": {
+        "instruction": "Choose a deliberate display/body type pairing or a distinctive single family; do not default to Inter, system-ui, or Arial without a reason."
+      },
+      "hash": "sha256:19a323018876c5b4ed023884321366437c5354683474dc04003bcb7cd780db88"
+    },
+    {
+      "id": "DG-COLOR-001",
+      "category": "color",
+      "required": true,
+      "payload": {
+        "instruction": "Define a restrained semantic palette with explicit surface, text, muted, accent, border, and focus tokens; avoid generic purple gradients."
+      },
+      "hash": "sha256:41a80a8f3e7f994211f32497b0e27c29104820036cf318c7057816df105a7297"
+    },
+    {
+      "id": "DG-LAYOUT-001",
+      "category": "layout",
+      "required": true,
+      "payload": {
+        "instruction": "Establish a clear visual hierarchy using intentional section rhythm, asymmetric composition where appropriate, and a consistent spacing scale."
+      },
+      "hash": "sha256:c21f651c2c4263df500c727ffc860453319305c43b32585d34de08bc7d18c4b1"
+    },
+    {
+      "id": "DG-MOTION-001",
+      "category": "motion",
+      "required": true,
+      "payload": {
+        "instruction": "Add purposeful transitions for interactive state changes and restrained entrance motion; keep interactions responsive and respect prefers-reduced-motion."
+      },
+      "hash": "sha256:9ce3b2bb0a2214440253fa1cbd92f86dea08d1c87e57b4d8ece02f5330fdd108"
+    },
+    {
+      "id": "DG-RESP-001",
+      "category": "responsive",
+      "required": true,
+      "payload": {
+        "instruction": "Design and test mobile, tablet, and desktop layouts; do not merely shrink desktop content and do not allow horizontal overflow."
+      },
+      "hash": "sha256:8ceacb8aa4c67325dcfb3e16548692cc8526ff3f4a02b4fc7898303fafc6cdd9"
+    },
+    {
+      "id": "DG-A11Y-001",
+      "category": "accessibility",
+      "required": true,
+      "payload": {
+        "instruction": "Use visible focus states, semantic controls, accessible names, readable contrast, keyboard reachability, and reduced-motion fallbacks."
+      },
+      "hash": "sha256:1a5f0796e7dfc75d418e7530c766735876a1202064575456d154170b12f3df5b"
+    },
+    {
+      "id": "DG-ASSET-001",
+      "category": "assets",
+      "required": false,
+      "payload": {
+        "instruction": "Prefer purposeful original or product-relevant visual assets; avoid decorative stock imagery and placeholder icon clutter."
+      },
+      "hash": "sha256:1b6dc3cf3b744d261cdfdc46147fb521a8a7d073eaeb9ed494680a117f177b2a"
+    },
+    {
+      "id": "DG-COMP-001",
+      "category": "components",
+      "required": true,
+      "payload": {
+        "instruction": "Reuse the existing design tokens and components discovered in the target codebase before inventing competing primitives."
+      },
+      "hash": "sha256:dcf81b6b141a2db21f10f320dd1eab3fae48755311ce0415fe4fc75c4e5afe82"
+    },
+    {
+      "id": "DG-VERIFY-001",
+      "category": "verification",
+      "required": true,
+      "payload": {
+        "instruction": "Before claiming completion, provide the changed files, applied rule IDs, rendered breakpoint evidence, and unresolved issues."
+      },
+      "hash": "sha256:90bb8b3be63c97faa29bc8ef6a0601ed5a38bf324b7950455b8e86d4c17ebdcc"
+    }
+  ]
+}

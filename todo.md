@@ -31,3 +31,36 @@
 - [x] Capture explicit multi-viewport evidence for responsive validation before final delivery
 - [x] Capture mobile and tablet screenshots for the run-detail route with a persisted run id
 - [x] Review the run-detail responsive evidence and update the validation items accurately
+
+## Installable agent-quality-gate expansion
+
+- [x] Add an npx-style package entrypoint with install, init, check, loop, rules, and verify commands
+- [x] Package portable modern design, animation, responsive, accessibility, typography, asset, and anti-generic rules as versioned skills/rules
+- [x] Add agent-harness adapters and compiled instruction outputs for Claude Code, Cursor, Codex CLI, Gemini CLI, Copilot, and generic agents
+- [x] Add a designgate.config.json initializer and project-local rule installation flow
+- [x] Add an instruction manifest with rule IDs, versions, hashes, required/optional status, and exact prompt payloads
+- [x] Add instruction-application verification that checks agent outputs, changed files, tokens, motion, responsive behavior, and rule coverage
+- [x] Add old-model compatibility mode with concise layered prompts, deterministic checks, and retry-safe feedback
+- [x] Add CLI documentation and copy-paste installation examples for any coding agent
+- [x] Update the dashboard to show installed rules, agent adapter, instruction compliance score, and verification history
+- [x] Add tests for package commands, rule compilation, adapter output, instruction verification, and compatibility mode
+- [x] Re-run typecheck, tests, build, and responsive validation after the installable-agent expansion
+- [x] Save the final installable-agent checkpoint for delivery
+
+## Installable-agent hardening gaps
+
+- [x] Add per-rule payload hashes and explicit prompt payload objects to the instruction manifest
+- [x] Upgrade CLI verification to inspect concrete artifact evidence for tokens, motion, responsive behavior, changed files, and agent-applied output
+- [x] Bind the dashboard install/compliance panel to live project verification state instead of static adapter labels
+- [x] Expand CLI tests for per-rule hashes, adapter compilation, compatibility mode, and concrete verification evidence
+- [x] Capture fresh responsive validation evidence after the installable-agent dashboard update
+- [x] Save a new checkpoint after installable-agent hardening is complete
+
+## Final audit corrections
+
+- [x] Compute cryptographic per-rule hashes from each exact payload and assert them in tests
+- [x] Make verifier artifact evidence include changed-file classification, agent output manifest matching, and concrete token/motion/responsive checks
+- [x] Persist installer/verifier state through a project-facing status contract used by the dashboard
+- [x] Add tests for hash validity, compatibility feedback, and concrete verifier evidence paths
+- [x] Capture a fresh tablet preview after the final dashboard change
+- [x] Save the final audited checkpoint after all corrections

@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "license": "MIT",
+  "bin": {"designgate": "cli/designgate.mjs"},
+  "files": ["cli", "rules", "adapters", "templates", "README.md", "designgate.config.json"],
   "scripts": {
     "dev": "NODE_ENV=development tsx watch server/_core/index.ts",
     "build": "vite build && esbuild server/_core/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
@@ -10,7 +12,9 @@
     "check": "tsc --noEmit",
     "format": "prettier --write .",
     "test": "vitest run",
-    "db:push": "drizzle-kit generate && drizzle-kit migrate"
+    "db:push": "drizzle-kit generate && drizzle-kit migrate",
+    "designgate": "node cli/designgate.mjs",
+    "designgate:verify": "node cli/designgate.mjs verify ."
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.693.0",

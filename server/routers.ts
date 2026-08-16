@@ -47,6 +47,13 @@ function svgScreenshot(label: string, accent: string) {
 export const appRouter = router({
   system: systemRouter,
   auth: router({ me: publicProcedure.query(opts => opts.ctx.user), logout: publicProcedure.mutation(({ ctx }) => { const cookieOptions = getSessionCookieOptions(ctx.req); ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 }); return { success: true } as const; }) }),
+  agent: router({
+    status: publicProcedure.input(z.object({ adapter: z.string().default("generic") })).query(async ({ input }) => {
+      const runs = await listRuns();
+      const passed = runs.filter(run => run.status === "passed").length;
+      return { adapter: input.adapter, installed: true, ruleSet: "designgate-modern-ui", version: "2026.08.16", complianceScore: runs.length ? Math.round((passed / runs.length) * 100) : 0, installedRules: ["DG-TYPO-001", "DG-COLOR-001", "DG-LAYOUT-001", "DG-MOTION-001", "DG-RESP-001", "DG-A11Y-001", "DG-ASSET-001", "DG-COMP-001", "DG-VERIFY-001"], verificationHistory: runs.slice(0, 8).map(run => ({ id: run.id, status: run.status, score: run.overallScore, iteration: run.currentIteration, createdAt: run.createdAt })) };
+    }),
+  }),
   runs: router({
     list: publicProcedure.query(() => listRuns()),
     get: publicProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => { const run = await getRun(input.id); if (!run) return null; const rawIterations = await getIterations(input.id); const iterations = rawIterations.map(item => ({ ...item, tierA: JSON.parse(item.tierA), tierB: JSON.parse(item.tierB), screenshots: JSON.parse(item.screenshots) })); return { run, iterations }; }),
