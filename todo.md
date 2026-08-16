@@ -105,3 +105,9 @@
 - [ ] Create the requested public GitHub repository under the authenticated account
 - [ ] Push the audited DesignGate package and all documentation to the public repository without exposing credentials
 - [ ] Verify public repository visibility and expected files, then provide its URL
+
+## Existing public repository push
+
+- [ ] Set the repository remote to https://github.com/HosnainRafi/AI-fine-graded.git without duplicating origin
+- [ ] Push the complete audited DesignGate source and documentation to the main branch
+- [ ] Verify the remote branch and key repository contents
