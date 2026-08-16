@@ -1,5 +1,28 @@
 # Project TODO
 
+## Standalone Tier B and public-launch hardening
+
+- [x] Add inline CLI Tier B vision grading behind `designgate loop --grade` without requiring the hosted dashboard
+- [x] Add retry/backoff and one strict JSON retry for transient standalone vision-grading API failures
+- [x] Support a documented Claude-compatible bring-your-own-key vision API path with structured Tier B scores and exact critique feedback
+- [x] Render mobile, tablet, and desktop evidence inside the graded CLI loop and force retries on combined Tier A and Tier B failure
+- [x] Add Phase-0 context detection that inventories existing design tokens and reusable components before agents generate UI
+- [x] Pass the detected Phase-0 project context to the generator before the first loop iteration and test that first-call contract
+- [x] Document `gradingModel: "auto"`, provider resolution, environment variables, and safe no-key behavior plainly
+- [x] Add CLI tests for inline vision grading, retry feedback, no-key behavior, and detected project context
+- [x] Add genuine visual product evidence and a sample report to the README
+- [x] Configure GitHub repository description, homepage, and discovery topics
+- [x] Add README badges for npm, license, and verification workflow
+- [x] Verify the npm publication state or replace the npm version badge with a truthful pre-publication badge
+- [x] Validate the rendered README badges, documentation links, and uploaded dashboard screenshot asset
+- [x] Validate all README and documentation links after the latest standalone-grading edits, including local guide links and public references
+- [x] Run a complete Markdown link-validation pass across README.md and docs/*.md, including relative destinations, anchor fragments, badges, and public URLs
+- [x] Decide whether to rename the public repository from `AI-fine-graded` to `designgate` after documenting migration implications
+- [x] Document the DesignGate repository rename, GitHub redirect behavior, canonical URL, local-remote update, and downstream reference updates
+- [x] Validate the renamed public repository end-to-end across README/docs/package metadata/workflow badge/skill installation/local remote/public URL
+- [x] Validate the standalone CLI path, documentation links, tests, build, and public GitHub synchronization
+- [x] Save and publish the final standalone-grading checkpoint
+
 - [x] Persist run configurations with target, generator command, max iterations, threshold, status, timestamps, and iteration history
 - [x] Persist rubric configurations in the database under the exact config filename designgate.config.json
 - [x] Add typed backend procedures for runs, iterations, rubric configs, report retrieval, and exports
@@ -125,7 +148,7 @@
 - [x] Add preset selection to CLI init/rules/verify flows and document usage
 - [x] Add npm publication readiness checks, version/release scripts, and clean-project smoke coverage
 - [x] Add GitHub Actions quality-gate workflow and required-check documentation
-- [x] Configure branch protection on HosnainRafi/AI-fine-graded when the token grants administration permission (current token returns 403; requires repository administration permission)
+- [ ] Configure branch protection on HosnainRafi/AI-fine-graded when the token grants administration permission (current token returns 403; requires repository administration permission)
 - [x] Run typecheck, tests, build, npm dry-run, and clean-project `npx designgate init .` validation
 - [x] Save the final release-operations checkpoint
 
@@ -142,13 +165,12 @@
 - [x] Add a reference-project mapping, licensing guidance, and clear distinction between adapted patterns and DesignGate’s novel enforced loop
 - [x] Add a practical repository-scaling roadmap covering modular CLI architecture, worker queue, storage, database, vision grading, security, observability, and CI
 - [x] Add troubleshooting, release, npm publishing, S3 evidence-import, and branch-protection operations documentation
-- [x] Add a documented update-and-push procedure and push each validated documentation update to GitHub
-- [x] Validate documentation links, package commands, tests, build, and repository synchronization
-- [x] Save the final documentation checkpoint and provide the completed guide
+- [ ] Add a documented update-and-push procedure and push each validated documentation update to GitHub
+- [ ] Validate documentation links, package commands, tests, build, and repository synchronization
+- [ ] Save the final documentation checkpoint and provide the completed guide
 
 ## Comprehensive documentation and scalable adoption (active tracking)
 
-- [x] Complete the user-authorized protected-main merge while preserving or restoring branch-protection requirements
 - [x] Fix the protected-branch `verify-ui` workflow so pnpm is available before `actions/setup-node` enables the pnpm cache
 - [x] Prevent Markdown documentation text from causing false deterministic UI-rule failures in the protected `verify-ui` workflow
 - [x] Create a full product guide explaining DesignGate architecture, commands, evidence flow, grading loop, reports, and safeguards
@@ -157,6 +179,6 @@
 - [x] Add a reference-project mapping, licensing guidance, and clear distinction between adapted patterns and DesignGate’s novel enforced loop
 - [x] Add a practical repository-scaling roadmap covering modular CLI architecture, worker queue, storage, database, vision grading, security, observability, and CI
 - [x] Add troubleshooting, release, npm publishing, S3 evidence-import, and branch-protection operations documentation
-- [x] Add a documented update-and-push procedure and push each validated documentation update to GitHub
-- [x] Validate documentation links, package commands, tests, build, and repository synchronization
-- [x] Save the final documentation checkpoint and provide the completed guide
+- [ ] Add a documented update-and-push procedure and push each validated documentation update to GitHub
+- [ ] Validate documentation links, package commands, tests, build, and repository synchronization
+- [ ] Save the final documentation checkpoint and provide the completed guide

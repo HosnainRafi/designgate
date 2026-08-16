@@ -1,7 +1,7 @@
 import { request } from "node:https";
 
 const owner = process.env.DESIGNGATE_GITHUB_OWNER ?? "HosnainRafi";
-const repo = process.env.DESIGNGATE_GITHUB_REPO ?? "AI-fine-graded";
+const repo = process.env.DESIGNGATE_GITHUB_REPO ?? "designgate";
 const branch = process.env.DESIGNGATE_GITHUB_BRANCH ?? "main";
 const token = process.env.GITHUB_TOKEN;
 
