@@ -33,6 +33,12 @@ The module boundaries should share versioned TypeScript schemas. For example, th
 | 4. Separate storage lifecycle | Formalize S3 key conventions, metadata, checksums, retention, and deletion policy. | All evidence is queryable by run/iteration and deletion is auditable. |
 | 5. Harden production operation | Add authz, tenancy isolation, rate limits, observability, CI policy, and recovery playbooks. | A team can operate concurrent work safely with measurable service objectives. |
 
+## Current no-cost control plane
+
+The hosted dashboard now implements the control-plane foundations before a durable worker is introduced: workspace and project isolation, scoped roles, project audit events, user-triggered job records, human review states, quota checks, and manually initiated retention cleanup. This implementation intentionally uses no additional service or platform-owned model key. A request starts the work, records its state, and completes without leaving a worker online.
+
+This is suitable for interactive, bounded team use. It is **not** a claim that expensive browser and vision work can scale indefinitely inside request handlers. Scheduled cleanup, asynchronous retry, higher concurrency, browser isolation, and unattended work remain part of the next-stage worker deployment below. See [No-Cost Team Operations](TEAM_OPERATIONS.md) for the current operating boundary.
+
 ## Worker queue and concurrency
 
 Playwright rendering and vision grading are resource-intensive and should not execute inside request/response handlers at scale. Use a durable queue with idempotency keys.

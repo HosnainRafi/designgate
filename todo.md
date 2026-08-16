@@ -219,3 +219,43 @@
 - [x] Validate, merge, restore protection, save a final checkpoint, and report npm/demo URLs
 
 - [x] Add and document a two-provider golden-set sanity-check workflow that validates score shape and acceptable ranges across Anthropic and OpenAI-compatible providers
+
+## Reusable skill
+
+- [x] Create a reusable skill for DesignGate npm release, public demo publication, protected GitHub merge, validation, credential safety, and final checkpointing
+- [x] Validate and deliver the generated skill package to the user
+
+## Public main verification request
+
+- [x] Verify all completed DesignGate, npm, demo, documentation, and protection deliverables are present on public main; repair and publish any missing items
+
+## Product assessment and roadmap
+
+- [x] Assess current DesignGate capabilities and provide a prioritized next-step roadmap across product, adoption, reliability, and release automation
+
+## AutoClaw and z.ai guidance
+
+- [x] Verify z.ai-compatible vision configuration and provide a tested AutoClaw gaming-zone build and DesignGate verification workflow
+
+## Team and dashboard readiness
+
+- [x] Add workspace/project isolation, scoped roles, review states, audit events, retention policies, usage quotas, and a durable worker-job model
+- [x] Implement a secured team administration and operations dashboard
+- [x] Configure no-cost user-triggered execution and manual retention cleanup for the selected hosting model instead of an always-on worker
+- [ ] Validate, merge to protected main, restore protection, and publish the team-ready release
+
+## Live public repository re-audit
+
+- [x] Verify and, if needed, correct GitHub metadata and main-branch inline multi-provider Tier B grading
+
+## No-cost team and dashboard readiness
+
+- [x] Design a no-new-service-cost architecture using existing authentication, database, storage, and user-triggered execution
+- [x] Add workspace and project isolation with owner, admin, reviewer, and member roles
+- [x] Add durable per-project audit events for run, review, membership, retention, and quota actions
+- [x] Add user-triggered job records with bounded queueing, cancellation, status, retry-safe transitions, and no always-on worker
+- [x] Add review states and reviewer decision workflows for verification runs
+- [x] Add configurable project retention policies and safe manual cleanup controls
+- [x] Add per-workspace usage quotas and transparent quota reporting without new API keys
+- [x] Build access-aware dashboard views for projects, jobs, reviews, audit events, retention, and quotas
+- [ ] Add no-cost operating documentation, tests, migration validation, responsive verification, GitHub synchronization, and checkpoint
