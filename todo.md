@@ -204,5 +204,5 @@
 
 ## Final remediation verification
 
-- [ ] Save a new final project checkpoint after the PR #6 remediation merge
+- [x] Save a new final project checkpoint after the PR #6 remediation merge
 - [x] Verify and record main protection after the remediation merge: one required approval and required `verify-ui`
