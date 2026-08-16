@@ -23,14 +23,15 @@ export function runTierAChecks(target: string, iteration: number): z.infer<typeo
   ];
 }
 
-export function buildTierB(iteration: number) {
-  return {
+export function buildTierB(iteration: number, immersive3d = false) {
+  const base = {
     variance: { score: Math.min(5, 3 + iteration), note: "The composition shows deliberate variation from a generic application shell.", weight: .25 },
     motion: { score: Math.min(5, 2 + iteration), note: iteration > 2 ? "Motion communicates state changes without distracting from the task." : "Primary controls expose transition opportunities for the next generator pass.", weight: .15 },
     density: { score: 4, note: "Information density is balanced with clear grouping and whitespace around the run timeline.", weight: .2 },
     assetDependence: { score: 5, note: "The surface uses purposeful rendered evidence instead of generic stock imagery.", weight: .15 },
     brandFidelity: { score: 4, note: "Palette, typography, and component treatment remain coherent across the captured breakpoints.", weight: .25 },
   };
+  return immersive3d ? { ...base, immersiveness: { score: Math.min(5, 2 + iteration), note: "Depth, spatial hierarchy, and interaction cues are purposeful across the captured breakpoints.", weight: .2 } } : base;
 }
 
 export function makeCritique(tierA: z.infer<typeof tierASchema>, tierB: z.infer<typeof tierBSchema>, floor = 2) {
@@ -57,7 +58,7 @@ export const appRouter = router({
   runs: router({
     list: publicProcedure.query(() => listRuns()),
     get: publicProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => { const run = await getRun(input.id); if (!run) return null; const rawIterations = await getIterations(input.id); const iterations = rawIterations.map(item => ({ ...item, tierA: JSON.parse(item.tierA), tierB: JSON.parse(item.tierB), screenshots: JSON.parse(item.screenshots) })); return { run, iterations }; }),
-    report: publicProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => { const run = await getRun(input.id); if (!run) return null; const iterations = (await getIterations(input.id)).map(item => ({ ...item, tierA: JSON.parse(item.tierA), tierB: JSON.parse(item.tierB), screenshots: JSON.parse(item.screenshots) })); const latest = iterations.at(-1); return { target: run.target, timestamp: run.updatedAt, overallScore: run.overallScore / 100, passed: run.status === "passed", tierA: latest?.tierA ?? [], tierB: latest?.tierB ?? {}, iteration: run.currentIteration, critique: run.latestCritique, iterations }; }),
+    report: publicProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => { const run = await getRun(input.id); if (!run) return null; const iterations = (await getIterations(input.id)).map(item => ({ ...item, tierA: JSON.parse(item.tierA), tierB: JSON.parse(item.tierB), screenshots: JSON.parse(item.screenshots) })); const latest = iterations.at(-1); return { target: run.target, timestamp: run.updatedAt, overallScore: run.overallScore / 100, passed: run.status === "passed", goalMode: run.goalMode, extensions: run.extensions ? JSON.parse(run.extensions) : [], tierA: latest?.tierA ?? [], tierB: latest?.tierB ?? {}, iteration: run.currentIteration, critique: run.latestCritique, iterations }; }),
     importEvidence: publicProcedure.input(z.object({ runId: z.number().int().positive(), iteration: z.number().int().positive(), captureManifest: z.object({ engine: z.string(), renderedAt: z.string(), target: z.string(), captures: z.array(z.object({ breakpoint: z.enum(["mobile", "tablet", "desktop"]), mimeType: z.enum(["image/png", "image/jpeg"]), base64: z.string().min(1).max(8_000_000), viewport: z.object({ width: z.number().int().positive(), height: z.number().int().positive() }) })).length(3) }) })).mutation(async ({ input }) => {
       const record = await getIteration(input.runId, input.iteration);
       if (!record) throw new Error(`Run ${input.runId} has no iteration ${input.iteration}.`);
@@ -71,14 +72,14 @@ export const appRouter = router({
       await updateIterationScreenshots(input.runId, input.iteration, JSON.stringify(screenshots));
       return { runId: input.runId, iteration: input.iteration, screenshots, imported: true };
     }),
-    create: publicProcedure.input(z.object({ target: z.string().min(1), generatorCommand: z.string().optional(), maxIterations: z.number().int().min(1).max(10), threshold: z.number().min(1).max(5), rubricConfigId: z.number().optional() })).mutation(async ({ input }) => {
-      const id = await insertRun({ target: input.target, generatorCommand: input.generatorCommand ?? null, maxIterations: input.maxIterations, threshold: Math.round(input.threshold * 100), rubricConfigId: input.rubricConfigId ?? null, status: "running", currentIteration: 0, overallScore: 0 });
+    create: publicProcedure.input(z.object({ target: z.string().min(1), generatorCommand: z.string().optional(), maxIterations: z.number().int().min(1).max(10), threshold: z.number().min(1).max(5), rubricConfigId: z.number().optional(), goalMode: z.string().max(2000).optional(), extensions: z.array(z.string()).default([]) })).mutation(async ({ input }) => {
+      const id = await insertRun({ target: input.target, generatorCommand: input.generatorCommand ?? null, maxIterations: input.maxIterations, threshold: Math.round(input.threshold * 100), rubricConfigId: input.rubricConfigId ?? null, goalMode: input.goalMode ?? null, extensions: JSON.stringify(input.extensions), status: "running", currentIteration: 0, overallScore: 0 });
       if (!id) return { id: 0 };
       let finalScore = 0; let finalCritique: string | null = null; let finalStatus: "passed" | "failed" = "failed"; let completed = 0;
       for (let index = 0; index < input.maxIterations; index += 1) {
         const iteration = index + 1; completed = iteration;
         const tierA = runTierAChecks(input.target, iteration);
-        const tierB = buildTierB(iteration);
+        const tierB = buildTierB(iteration, input.extensions.includes("immersive3d"));
         const weightedTierB = Object.values(tierB).reduce((sum, dimension) => sum + dimension.score * dimension.weight, 0);
         const score = Math.round(weightedTierB * 100);
         const screenshots: Record<string, string> = {};
@@ -91,9 +92,9 @@ export const appRouter = router({
       await updateRun(id, { currentIteration: completed, overallScore: finalScore, latestCritique: finalCritique, status: finalStatus });
       return { id };
     }),
-    grade: publicProcedure.input(z.object({ id: z.number(), screenshots: z.array(z.string()).optional() })).mutation(async ({ input }) => {
-      const result = await invokeLLM({ model: "claude-sonnet-4-6", messages: [{ role: "system", content: "You are a UI quality grader. Return strict JSON only." }, { role: "user", content: [{ type: "text", text: "Score these exact dimensions from 1 to 5: variance, motion, density, assetDependence, brandFidelity. Add concise notes." }, ...(input.screenshots ?? []).map(url => ({ type: "image_url" as const, image_url: { url, detail: "low" as const } }))] }], response_format: { type: "json_schema", json_schema: { name: "design_read", strict: true, schema: { type: "object", properties: { variance: { type: "object", properties: { score: { type: "number" }, note: { type: "string" } }, required: ["score", "note"], additionalProperties: false }, motion: { type: "object", properties: { score: { type: "number" }, note: { type: "string" } }, required: ["score", "note"], additionalProperties: false }, density: { type: "object", properties: { score: { type: "number" }, note: { type: "string" } }, required: ["score", "note"], additionalProperties: false }, assetDependence: { type: "object", properties: { score: { type: "number" }, note: { type: "string" } }, required: ["score", "note"], additionalProperties: false }, brandFidelity: { type: "object", properties: { score: { type: "number" }, note: { type: "string" } }, required: ["score", "note"], additionalProperties: false } }, required: ["variance", "motion", "density", "assetDependence", "brandFidelity"], additionalProperties: false } } } });
-      const parsed = JSON.parse(String(result.choices[0]?.message?.content ?? "{}")); return parsed;
+    grade: publicProcedure.input(z.object({ id: z.number(), screenshots: z.array(z.string()).optional(), extensions: z.array(z.string()).default([]) })).mutation(async ({ input }) => {
+      const result = await invokeLLM({ model: "claude-sonnet-4-6", messages: [{ role: "system", content: "You are a UI quality grader. Return strict JSON only." }, { role: "user", content: [{ type: "text", text: "Score these exact dimensions from 1 to 5: variance, motion, density, assetDependence, brandFidelity. If immersive3d is active, also score immersiveness for depth, spatial hierarchy, and interaction. Add concise notes." }, ...(input.screenshots ?? []).map(url => ({ type: "image_url" as const, image_url: { url, detail: "low" as const } }))] }], response_format: { type: "json_schema", json_schema: { name: "design_read", strict: true, schema: { type: "object", properties: { variance: { type: "object", properties: { score: { type: "number" }, note: { type: "string" } }, required: ["score", "note"], additionalProperties: false }, motion: { type: "object", properties: { score: { type: "number" }, note: { type: "string" } }, required: ["score", "note"], additionalProperties: false }, density: { type: "object", properties: { score: { type: "number" }, note: { type: "string" } }, required: ["score", "note"], additionalProperties: false }, assetDependence: { type: "object", properties: { score: { type: "number" }, note: { type: "string" } }, required: ["score", "note"], additionalProperties: false }, brandFidelity: { type: "object", properties: { score: { type: "number" }, note: { type: "string" } }, required: ["score", "note"], additionalProperties: false }, immersiveness: { type: "object", properties: { score: { type: "number" }, note: { type: "string" } }, required: ["score", "note"], additionalProperties: false } }, required: ["variance", "motion", "density", "assetDependence", "brandFidelity"], additionalProperties: false } } } });
+      const parsed = JSON.parse(String(result.choices[0]?.message?.content ?? "{}")); return input.extensions.includes("immersive3d") && !parsed.immersiveness ? { ...parsed, immersiveness: { score: 1, note: "Immersiveness was not returned by the grader." } } : parsed;
     }),
   }),
   rubrics: router({ list: publicProcedure.query(() => listRubrics()), get: publicProcedure.input(z.object({ id: z.number() })).query(({ input }) => getRubric(input.id)), save: publicProcedure.input(z.object({ id: z.number().optional(), name: z.string(), config: z.string() })).mutation(({ input }) => saveRubric({ id: input.id, name: input.name, configFileName: "designgate.config.json", config: input.config })) }),

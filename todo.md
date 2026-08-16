@@ -1,5 +1,17 @@
 # Project TODO
 
+## Updated 3D and Goal Mode requirements
+
+- [x] Add additive immersive3d extension manifest with DG-3D-001, DG-3D-002, DG-DEPTH-001, DG-INTERACT-001, and DG-PERF-001
+- [x] Add conditional Tier B immersiveness dimension with normalized six-dimension weights
+- [x] Add browser evidence for canvas/WebGL, supported 3D dependency, depth interaction, synthetic interaction, LCP, and long tasks
+- [x] Add Goal Mode stack decision table for gaming, portfolio, and ecommerce
+- [x] Add `designgate plan` with deterministic structured goal brief and explicit unknown-category failure
+- [x] Add `designgate build` with plan-to-generator prompt handoff and existing render/check/loop integration
+- [x] Preserve legacy behavior when 3D extensions and Goal Mode are not enabled
+- [x] Add focused tests, documentation, visual proof, full validation, public-main synchronization, and final checkpoint for the new feature set
+
+
 ## Standalone Tier B and public-launch hardening
 
 - [x] Add inline CLI Tier B vision grading behind `designgate loop --grade` without requiring the hosted dashboard
@@ -148,7 +160,7 @@
 - [x] Add preset selection to CLI init/rules/verify flows and document usage
 - [x] Add npm publication readiness checks, version/release scripts, and clean-project smoke coverage
 - [x] Add GitHub Actions quality-gate workflow and required-check documentation
-- [ ] Configure branch protection on HosnainRafi/AI-fine-graded when the token grants administration permission (current token returns 403; requires repository administration permission)
+- [x] Configure branch protection on HosnainRafi/designgate with verify-ui and one required approval
 - [x] Run typecheck, tests, build, npm dry-run, and clean-project `npx designgate init .` validation
 - [x] Save the final release-operations checkpoint
 
@@ -165,9 +177,9 @@
 - [x] Add a reference-project mapping, licensing guidance, and clear distinction between adapted patterns and DesignGate’s novel enforced loop
 - [x] Add a practical repository-scaling roadmap covering modular CLI architecture, worker queue, storage, database, vision grading, security, observability, and CI
 - [x] Add troubleshooting, release, npm publishing, S3 evidence-import, and branch-protection operations documentation
-- [ ] Add a documented update-and-push procedure and push each validated documentation update to GitHub
-- [ ] Validate documentation links, package commands, tests, build, and repository synchronization
-- [ ] Save the final documentation checkpoint and provide the completed guide
+- [x] Add a documented update-and-push procedure and push each validated documentation update to GitHub
+- [x] Validate documentation links, package commands, tests, build, and repository synchronization
+- [x] Save the final documentation checkpoint and provide the completed guide
 
 ## Comprehensive documentation and scalable adoption (active tracking)
 
@@ -179,6 +191,6 @@
 - [x] Add a reference-project mapping, licensing guidance, and clear distinction between adapted patterns and DesignGate’s novel enforced loop
 - [x] Add a practical repository-scaling roadmap covering modular CLI architecture, worker queue, storage, database, vision grading, security, observability, and CI
 - [x] Add troubleshooting, release, npm publishing, S3 evidence-import, and branch-protection operations documentation
-- [ ] Add a documented update-and-push procedure and push each validated documentation update to GitHub
-- [ ] Validate documentation links, package commands, tests, build, and repository synchronization
-- [ ] Save the final documentation checkpoint and provide the completed guide
+- [x] Add a documented update-and-push procedure and push each validated documentation update to GitHub
+- [x] Validate documentation links, package commands, tests, build, and repository synchronization
+- [x] Save the final documentation checkpoint and provide the completed guide

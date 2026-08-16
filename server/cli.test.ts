@@ -13,7 +13,7 @@ afterEach(() => { for (const path of created.splice(0)) rmSync(path, { recursive
 async function startVisionServer(root: string) {
   const script = join(root, "vision-server.mjs");
   writeFileSync(script, `import { createServer } from "node:http";
-const grade = { variance: { score: 1, note: "Increase hierarchy and distinctiveness." }, motion: { score: 1, note: "Add purposeful motion cues." }, density: { score: 1, note: "Improve grouping and whitespace." }, assetDependence: { score: 1, note: "Replace generic visual assets." }, brandFidelity: { score: 1, note: "Strengthen the shared brand language." } };
+const grade = { variance: { score: 1, note: "Increase hierarchy and distinctiveness." }, motion: { score: 1, note: "Add purposeful motion cues." }, density: { score: 1, note: "Improve grouping and whitespace." }, assetDependence: { score: 1, note: "Replace generic visual assets." }, brandFidelity: { score: 1, note: "Strengthen the shared brand language." }, immersiveness: { score: 1, note: "Make depth and spatial composition purposeful." } };
 const server = createServer((request, response) => { let body = ""; request.on("data", chunk => body += chunk); request.on("end", () => { response.writeHead(200, { "content-type": "application/json" }); response.end(JSON.stringify({ content: [{ type: "text", text: JSON.stringify(grade) }] })); }); });
 server.listen(0, "127.0.0.1", () => console.log(server.address().port));`);
   const child = spawn(process.execPath, [script], { stdio: ["ignore", "pipe", "inherit"] });
@@ -137,6 +137,34 @@ describe("installable DesignGate CLI", () => {
     expect(feedback.startsWith("Phase-0 project context")).toBe(true);
     expect(feedback).toContain("Generate or update the requested interface now.");
     expect(feedback).toContain("Improve variance: Increase hierarchy and distinctiveness.");
+  });
+
+  it("installs the additive immersive3d extension and emits 3D evidence checks", () => {
+    const root = mkdtempSync(join(tmpdir(), "designgate-immersive-")); created.push(root);
+    mkdirSync(join(root, "src/components"), { recursive: true });
+    writeFileSync(join(root, "package.json"), JSON.stringify({ dependencies: { three: "^0.170.0" } }));
+    const html = join(root, "index.html");
+    writeFileSync(html, "<style>body{margin:0;display:grid;gap:1rem}@media (max-width:700px){body{padding:1rem}}@media (prefers-reduced-motion:reduce){*{transition:none}}</style><canvas aria-label='3D scene' width='400' height='300'></canvas>");
+    run(["init", root, "--preset", "gaming-3d"]);
+    const installed = JSON.parse(readFileSync(join(root, ".designgate/manifest.json"), "utf8"));
+    expect(installed.extensionRules.map((rule: { id: string }) => rule.id)).toEqual(expect.arrayContaining(["DG-3D-001", "DG-3D-002", "DG-DEPTH-001", "DG-INTERACT-001", "DG-PERF-001"]));
+    const capture = JSON.parse(run(["render", html, "--project", root]));
+    expect(capture.captures).toHaveLength(3);
+    expect(capture.captures.every((item: { immersive: { canvasCount: number } }) => item.immersive.canvasCount >= 1)).toBe(true);
+    try { run(["verify", root]); } catch { /* the minimal fixture intentionally lacks all required evidence */ }
+    const report = JSON.parse(readFileSync(join(root, ".designgate/report.json"), "utf8"));
+    expect(report.checks.map((check: { id: string }) => check.id)).toEqual(expect.arrayContaining(["DG-3D-001", "DG-3D-002", "DG-DEPTH-001", "DG-INTERACT-001", "DG-PERF-001"]));
+  });
+
+  it("plans supported Goal Mode categories and fails unknown categories explicitly", () => {
+    const root = mkdtempSync(join(tmpdir(), "designgate-goal-")); created.push(root);
+    run(["init", root]);
+    const brief = JSON.parse(run(["plan", "Build a multiplayer 3D game with a cinematic lobby", "--project", root]));
+    expect(brief.category).toBe("gaming");
+    expect(brief.stack.framework).toBe("React + Vite");
+    expect(brief.ruleExtensions).toContain("immersive3d");
+    expect(existsSync(join(root, ".designgate/goal-brief.json"))).toBe(true);
+    expect(() => run(["plan", "Build a tax compliance admin tool", "--project", root])).toThrow(/Unknown Goal Mode category/);
   });
 
   it("fails safely with an actionable message when inline vision grading has no Claude API key", () => {

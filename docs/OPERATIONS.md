@@ -23,6 +23,26 @@ git log -1 --oneline
 
 Before pushing, inspect the staged diff and confirm that it contains no secrets, generated browser captures, `.designgate/evidence-import.json`, database dumps, or local environment files. The public `main` branch is protected, so merge only a passing reviewed pull request. Keep the working tree clean after the push so the repository state is easy to reproduce.
 
+## Validated update-and-push procedure
+
+Use this procedure for every validated DesignGate update, including documentation-only changes. First run `git diff --check`, `pnpm check`, `pnpm test`, `pnpm build`, and `pnpm validate:docs`. Next inspect `git status --short` and the staged diff for credentials, local captures, generated evidence, or unrelated files. Create a dedicated branch from the current `public/main`, commit only the validated change, and push it with `git push -u public HEAD`. Open a pull request into `main`, wait for the required `verify-ui` check, and merge using the repository’s configured linear-history strategy. After the merge, fetch `public/main`, confirm the expected files and commit are present, and verify that branch protection still requires one approval and the `verify-ui` status check. Save a project checkpoint only after this remote verification is complete.
+
+For this repository, the canonical commands are:
+
+```bash
+git fetch public main
+git switch -c feature/<short-name> public/main
+pnpm check && pnpm test && pnpm build && pnpm validate:docs
+git add <intended-files>
+git commit -m "<scoped change>"
+git push -u public HEAD
+gh pr create --repo HosnainRafi/designgate --base main --fill
+# After verify-ui passes and review/protection requirements are satisfied:
+gh pr merge <number> --repo HosnainRafi/designgate --rebase
+```
+
+Never force-push a protected branch or bypass review requirements unless the repository owner has explicitly authorized a temporary administrative operation. If an administrative bypass is used, restore the original branch-protection policy immediately after the merge.
+
 ## Evidence-import operations
 
 The local CLI captures raw PNGs in `.designgate/captures/` and writes a Base64 import payload. Use the following sequence only after the dashboard contains the intended run and iteration IDs.

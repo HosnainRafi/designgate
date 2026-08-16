@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "1.0.0",
+  "categories": {
+    "gaming": {
+      "signals": ["gaming", "game zone", "esports", "arcade", "multiplayer", "3d game", "game"],
+      "stack": {
+        "framework": "React + Vite",
+        "3d": "React Three Fiber + drei",
+        "styling": "Tailwind + custom design tokens",
+        "motion": "Framer Motion",
+        "state": "Zustand"
+      },
+      "requiredCapabilities": ["3d", "highMotion"],
+      "ruleExtensions": ["immersive3d"],
+      "sections": [
+        { "name": "Hero", "notes": "3D interactive centerpiece, bold display type, and one primary CTA." },
+        { "name": "Featured Games", "notes": "Card grid with hover-triggered depth or tilt rather than flat static cards." },
+        { "name": "Community/Leaderboard", "notes": "Real-time-feeling data display with motion on value changes." },
+        { "name": "Footer", "notes": "Keep the footer standard and reserve the 3D budget for the hero." }
+      ],
+      "moodKeywords": ["neon", "high-contrast", "energetic", "premium esports aesthetic — not clipart gamer style"]
+    },
+    "portfolio": {
+      "signals": ["portfolio", "personal site", "showcase"],
+      "stack": {
+        "framework": "Next.js",
+        "3d": "optional — React Three Fiber if user confirms",
+        "styling": "Tailwind",
+        "motion": "Framer Motion",
+        "state": "none needed"
+      },
+      "requiredCapabilities": ["highMotion"],
+      "ruleExtensions": [],
+      "sections": [
+        { "name": "Hero", "notes": "Distinctive identity, concise positioning, and one clear contact or work CTA." },
+        { "name": "Selected Work", "notes": "Projects should lead with outcome and craft, not a generic card wall." },
+        { "name": "About", "notes": "Use a compact narrative that reinforces the designer or maker’s point of view." }
+      ],
+      "moodKeywords": ["authored", "editorial", "expressive", "craft-led"]
+    },
+    "ecommerce": {
+      "signals": ["store", "shop", "ecommerce", "products"],
+      "stack": {
+        "framework": "Next.js",
+        "3d": "none by default",
+        "styling": "Tailwind + shadcn/ui",
+        "motion": "subtle only",
+        "state": "Zustand or Redux Toolkit"
+      },
+      "requiredCapabilities": ["forms", "payments"],
+      "ruleExtensions": [],
+      "sections": [
+        { "name": "Hero", "notes": "Lead with the product value proposition and a direct shopping action." },
+        { "name": "Product Discovery", "notes": "Make filtering, comparison, and product confidence clear." },
+        { "name": "Proof and Checkout", "notes": "Use trust, delivery, and payment clarity without distracting effects." }
+      ],
+      "moodKeywords": ["clear", "confident", "product-led", "conversion-aware"]
+    }
+  }
+}

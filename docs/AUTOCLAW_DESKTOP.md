@@ -184,3 +184,27 @@ For the complete CLI reference and report contract, read [DesignGate Product Gui
 [1] [AutoClaw official site](https://autoclaw.z.ai/).
 
 [2] [OpenClaw Skills documentation](https://docs.openclaw.ai/tools/skills).
+
+
+## Immersive 3D and Goal Mode workflow
+
+For a 3D browser project, use the maintained `gaming-3d` preset and plan the product goal before asking AutoClaw to generate UI:
+
+```bash
+npx designgate@latest init . --agent generic --preset gaming-3d
+npx designgate@latest plan "Build a multiplayer 3D game with a cinematic lobby" --project .
+npx designgate@latest build "Build a multiplayer 3D game with a cinematic lobby" \
+  --generator "npm run agent:generate" --project . --target http://localhost:3000 --grade
+```
+
+The supported Goal Mode categories are `gaming`, `portfolio`, and `ecommerce`; unknown categories fail explicitly. The goal brief and Phase-0 context must be available to the generator before its first attempt. An immersive run keeps the mobile/tablet/desktop captures and adds canvas/WebGL, supported-dependency, depth, interaction, LCP, long-task, and conditional `immersiveness` evidence. Do not enable the extension for a legacy 2D project unless its browser target actually exposes a 3D surface.
+
+A useful AutoClaw prompt is:
+
+```text
+Use $designgate. First run `designgate plan` for this goal and inspect the generated
+brief plus project context. Build the planned experience with the existing tokens and
+components. If this is a 3D project, use the gaming-3d preset. Start the preview,
+run `build --grade`, and forward every failed detail string exactly. Do not declare
+completion until the combined report passes or the remaining instructions are listed.
+```
