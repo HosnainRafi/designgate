@@ -200,4 +200,20 @@
 - [x] Re-audit and, if needed, wire standalone Tier B vision grading into the open `designgate loop --grade` path with retry feedback and tests
 - [x] Verify and update the public GitHub repository name, description, homepage, and discovery topics
 - [x] Add genuine visual proof, a sample report, and truthful npm/license/CI badges to README.md
-- [ ] Run full validation, push the remediation branch, merge into protected main, restore protection, and save a final checkpoint
+- [x] Run full validation, push the remediation branch, merge into protected main, restore protection, and save a final checkpoint
+
+## Final remediation verification
+
+- [x] Save a new final project checkpoint after the PR #6 remediation merge
+- [x] Verify and record main protection after the remediation merge: one required approval and required `verify-ui`
+
+## Provider-agnostic Tier B and release deliverables
+
+- [x] Add a provider abstraction with secure ProviderConfig resolution and a shared GradingResult contract
+- [x] Implement Anthropic and generic OpenAI-compatible vision providers while preserving Claude as the default
+- [x] Extend only the tierB.gradingModel config field with backward-compatible provider objects and supportsVision validation
+- [x] Document Anthropic, Mistral, and OpenRouter examples plus a two-provider golden-set sanity check
+- [x] Add mocked unit coverage for each provider and unsupported-vision failure paths
+- [x] Publish the package to npm and replace the pre-publication README badge with the live npm version badge
+- [x] Create and publish a small public failing-to-passing loop-grade demo repository
+- [ ] Validate, merge, restore protection, save a final checkpoint, and report npm/demo URLs

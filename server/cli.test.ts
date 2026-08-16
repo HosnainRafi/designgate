@@ -29,7 +29,7 @@ describe("installable DesignGate CLI", () => {
   it("declares a minimal publishable npm package contract", () => {
     const packageJson = JSON.parse(readFileSync(join(process.cwd(), "package.json"), "utf8"));
     expect(packageJson.bin.designgate).toBe("cli/designgate.mjs");
-    expect(packageJson.files).toEqual(expect.arrayContaining(["cli", "rules", "docs", "README.md", "LICENSE", "SKILL.md"]));
+    expect(packageJson.files).toEqual(expect.arrayContaining(["cli", "grader", "rules", "config", "docs", "README.md", "LICENSE", "SKILL.md"]));
     expect(packageJson.publishConfig.access).toBe("public");
     for (const file of ["README.md", "LICENSE", "SKILL.md", "docs/GUIDE.md", "cli/designgate.mjs", "rules/manifest.json"]) expect(existsSync(join(process.cwd(), file))).toBe(true);
   });
@@ -38,7 +38,7 @@ describe("installable DesignGate CLI", () => {
     const output = execFileSync("npm", ["pack", "--dry-run", "--json", "--ignore-scripts"], { cwd: process.cwd(), encoding: "utf8" });
     const packed = JSON.parse(output)[0];
     const files = packed.files.map((file: { path: string }) => file.path);
-    expect(files).toEqual(expect.arrayContaining(["LICENSE", "README.md", "SKILL.md", "docs/GUIDE.md", "docs/AUTOCLAW_DESKTOP.md", "docs/SCALING.md", "docs/OPERATIONS.md", "cli/designgate.mjs", "package.json", "rules/manifest.json", "rules/designgate-modern-ui.md"]));
+    expect(files).toEqual(expect.arrayContaining(["LICENSE", "README.md", "SKILL.md", "docs/GUIDE.md", "docs/AUTOCLAW_DESKTOP.md", "docs/SCALING.md", "docs/OPERATIONS.md", "cli/designgate.mjs", "grader/providers/anthropic.mjs", "grader/providers/openai-compatible.mjs", "config/goal-categories.json", "package.json", "rules/manifest.json", "rules/designgate-modern-ui.md"]));
     expect(files.some((file: string) => file.startsWith("client/") || file.startsWith("server/"))).toBe(false);
   });
 
