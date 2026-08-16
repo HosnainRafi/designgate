@@ -189,3 +189,16 @@ GITHUB_TOKEN=ghp_... npm run github:protect
 ```
 
 The token must have repository administration permission. The command requires the `verify-ui` check, one approving review, stale-review dismissal, conversation resolution, linear history, and blocks force pushes and deletion. Override `DESIGNGATE_GITHUB_OWNER`, `DESIGNGATE_GITHUB_REPO`, and `DESIGNGATE_GITHUB_BRANCH` for another repository.
+
+
+## 3D designs and Goal Mode
+
+DesignGate supports an additive `immersive3d` extension for browser-rendered 3D interfaces. Activate it with the `gaming-3d` preset:
+
+```bash
+npx designgate@latest init . --agent claude-code --preset gaming-3d
+npx designgate@latest plan "Build a multiplayer 3D game with a cinematic lobby" --project .
+npx designgate@latest build "Build a multiplayer 3D game with a cinematic lobby" --generator "npm run agent:generate" --project . --target http://localhost:3000 --grade
+```
+
+The supported Goal Mode categories are `gaming`, `portfolio`, and `ecommerce`; unknown categories fail explicitly. Immersive runs add deterministic canvas/WebGL, dependency, depth, interaction, and performance evidence and conditionally add the Tier B `immersiveness` dimension. Projects that do not enable `immersive3d` or Goal Mode retain the legacy behavior. See [`docs/GUIDE.md`](docs/GUIDE.md) for the complete contract.

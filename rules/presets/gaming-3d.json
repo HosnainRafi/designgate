@@ -1,0 +1,11 @@
+{
+  "id": "gaming-3d",
+  "name": "Gaming 3D",
+  "extends": "designgate-modern-ui",
+  "description": "React/Vite-oriented gaming and immersive interface rules with additive WebGL evidence.",
+  "extensions": ["immersive3d"],
+  "rules": [
+    { "id": "DG-3D-PRESET-001", "category": "immersive3d", "instruction": "Reserve the immersive 3D budget for a deliberate focal area and keep navigation and core actions usable without it." },
+    { "id": "DG-3D-PRESET-002", "category": "immersive3d", "instruction": "Use high-contrast neon accents with authored tokens rather than clipart gamer styling or generic stock 3D." }
+  ]
+}
