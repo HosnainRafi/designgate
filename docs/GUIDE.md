@@ -139,7 +139,13 @@ npx designgate@latest check http://localhost:3000 --project . --grade
 npx designgate@latest grade .
 ```
 
-If the configured environment variable is absent, `--grade` and `grade` stop before making a network request and print an actionable setup message. They do not silently downgrade a requested visual-quality gate into Tier A-only verification. Because providers can be stricter or more lenient than the Claude baseline, run the same representative screenshot set through at least two providers and sanity-check that weighted scores are in the same ballpark before changing project thresholds.
+If the configured environment variable is absent, `--grade` and `grade` stop before making a network request and print an actionable setup message. They do not silently downgrade a requested visual-quality gate into Tier A-only verification. Because providers can be stricter or more lenient than the Claude baseline, run the same representative screenshot set through at least two providers and sanity-check that weighted scores are in the same ballpark before changing project thresholds. DesignGate’s provider contract test uses one fixed golden set and asserts that Anthropic and an OpenAI-compatible adapter return the same five-dimension score shape and valid 1–5 scores; use that test as the minimum provider rollout gate.
+
+```bash
+pnpm vitest run server/providers.test.ts
+```
+
+For a new provider, replay the same captured breakpoint set through the new adapter and the Anthropic baseline, compare the normalized dimensions and weighted overall score, and document any expected variance before enabling it for production thresholds.
 
 ## Evidence and persistence
 
