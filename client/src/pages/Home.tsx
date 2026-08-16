@@ -12,33 +12,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Separator } from "@/components/ui/separator";
 import { Activity, ArrowLeft, Check, ChevronRight, CircleAlert, FileJson, Gauge, GitBranch, Layers3, LayoutDashboard, Loader2, Menu, Play, Settings2, Sparkles, Terminal, X } from "lucide-react";
 
-const sampleRuns: any[] = [
-  { id: 12, target: "https://preview.acme.dev/checkout", status: "passed", overallScore: 438, currentIteration: 3, maxIterations: 5, createdAt: new Date(Date.now() - 1000 * 60 * 9) },
-  { id: 11, target: "./apps/marketing", status: "failed", overallScore: 316, currentIteration: 5, maxIterations: 5, createdAt: new Date(Date.now() - 1000 * 60 * 72) },
-  { id: 10, target: "http://localhost:4173/settings", status: "passed", overallScore: 402, currentIteration: 2, maxIterations: 4, createdAt: new Date(Date.now() - 1000 * 60 * 180) },
-];
-
-const sampleIterations = [
-  { iteration: 1, overallScore: 286, critique: "Fix: Card grid uses two inconsistent vertical gaps between sections." },
-  { iteration: 2, overallScore: 356, critique: "Improve motion: Transitions are present on primary controls but could better clarify state changes." },
-  { iteration: 3, overallScore: 438, critique: null },
-];
-
-const tierA = [
-  { id: "fonts", pass: true, severity: "warning", detail: "Display and body type pair detected; no single-font fallback pattern found." },
-  { id: "gradients", pass: true, severity: "warning", detail: "No generic purple-to-pink gradient detected in the rendered surface." },
-  { id: "spacing", pass: false, severity: "warning", detail: "Card grid uses two inconsistent vertical gaps between sections." },
-  { id: "contrast", pass: true, severity: "blocker", detail: "Text and interactive controls meet the configured contrast floor." },
-  { id: "responsive", pass: true, severity: "blocker", detail: "All three viewport captures rendered without horizontal overflow." },
-  { id: "icons", pass: true, severity: "warning", detail: "Icon buttons expose accessible labels and consistent stroke weight." },
-];
-const tierB = [
-  { id: "variance", score: 4, weight: 25, note: "The composition departs from a stock SaaS template through a strong editorial rail." },
-  { id: "motion", score: 3, weight: 15, note: "Transitions are present on primary controls but could better clarify state changes." },
-  { id: "density", score: 4, weight: 20, note: "Information density is balanced, with enough whitespace around the run timeline." },
-  { id: "assetDependence", score: 5, weight: 15, note: "The surface relies on purposeful diagrammatic UI rather than generic stock imagery." },
-  { id: "brandFidelity", score: 4, weight: 25, note: "The palette and typography are coherent across the dashboard and detail views." },
-];
 
 function scoreLabel(score: number) { return `${(score / 100).toFixed(2)} / 5`; }
 function formatDate(date: Date | string) { return new Date(date).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }); }
@@ -75,6 +48,7 @@ function Overview({ runs, onNewRun, onConfig }: { runs: any[]; onNewRun: () => v
 function RunDetail({ id, onBack, onNewRun, onConfig }: { id: number; onBack: () => void; onNewRun: () => void; onConfig: () => void }) {
   const query = trpc.runs.get.useQuery({ id }); const [activeShot, setActiveShot] = useState("desktop");
   if (query.isLoading) return <Shell onNewRun={onNewRun} onConfig={onConfig}><div className="page-wrap"><div className="panel"><Loader2 className="animate-spin text-accent" /><div className="mt-3 text-sm text-muted-foreground">Loading persisted run evidence…</div></div></div></Shell>;
+  if (query.error) return <Shell onNewRun={onNewRun} onConfig={onConfig}><div className="page-wrap"><div className="panel"><div className="font-display text-2xl font-semibold">Unable to load run evidence</div><p className="mt-2 text-sm text-muted-foreground">The persisted run could not be retrieved. Try again or return to the overview.</p><Button className="mt-4" onClick={onBack}>Back to runs</Button></div></div></Shell>;
   if (!query.data?.run) return <Shell onNewRun={onNewRun} onConfig={onConfig}><div className="page-wrap"><div className="panel"><div className="font-display text-2xl font-semibold">Run not found</div><Button className="mt-4" onClick={onBack}>Back to runs</Button></div></div></Shell>;
   const run = query.data.run; const iterations: any[] = query.data.iterations; const latest = iterations.at(-1); const runTierA = latest?.tierA ?? []; const runTierB = latest?.tierB ?? {};
   const score = run.overallScore / 100; const passed = run.status === "passed";
@@ -87,5 +61,6 @@ function RunDetail({ id, onBack, onNewRun, onConfig }: { id: number; onBack: () 
 export default function Home() {
   const [, setLocation] = useLocation(); const [, params] = useRoute("/runs/:id"); const [newRunOpen, setNewRunOpen] = useState(false); const [configOpen, setConfigOpen] = useState(false);
   const runsQuery = trpc.runs.list.useQuery(); const runs = (runsQuery.data ?? []) as any[];
+  if (!params?.id && runsQuery.error) return <Shell onNewRun={() => setNewRunOpen(true)} onConfig={() => setConfigOpen(true)}><div className="page-wrap"><div className="panel"><div className="font-display text-2xl font-semibold">Unable to load run history</div><p className="mt-2 text-sm text-muted-foreground">The persisted run list could not be retrieved. Retry the request or open a new run.</p><Button className="mt-4" onClick={() => runsQuery.refetch()}>Retry</Button></div></div></Shell>;
   return params?.id ? <RunDetail id={Number(params.id)} onBack={() => setLocation("/")} onNewRun={() => setNewRunOpen(true)} onConfig={() => setConfigOpen(true)} /> : <Overview runs={runs} onNewRun={() => setNewRunOpen(true)} onConfig={() => setConfigOpen(true)} />;
 }

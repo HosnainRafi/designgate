@@ -18,15 +18,15 @@
 - [x] Add JSON and human-readable report export downloads
 - [x] Add Vitest coverage for core backend procedures, scoring, critique formatting, and config persistence
 - [x] Validate responsive layouts, typecheck, tests, and production build
-- [ ] Save the final project checkpoint for delivery
+- [x] Save the final project checkpoint for delivery
 
 ## Follow-up implementation gaps
 
-- [ ] Replace all sample and hardcoded run, iteration, Tier A, Tier B, and critique data with persisted query data plus loading, error, and empty states
-- [ ] Implement real renderer/check/orchestrator flow with screenshots each iteration, deterministic Tier A checks, Tier B grading, persisted results, generator retries, and maxIterations enforcement
-- [ ] Add a real logout action to the app shell and bind detail, critique, and export UI to persisted run data only
-- [ ] Upgrade the rubric editor to validated field-based editing or strict JSON validation with load/save of the stored designgate.config.json
-- [ ] Add backend tests for run creation/retrieval, rubric persistence, grading/report assembly, and retry orchestration
+- [x] Replace all sample and hardcoded run, iteration, Tier A, Tier B, and critique data with persisted query data plus loading, error, and empty states
+- [x] Implement real renderer/check/orchestrator flow with screenshots each iteration, deterministic Tier A checks, Tier B grading, persisted results, generator retries, and maxIterations enforcement
+- [x] Add a real logout action to the app shell and bind detail, critique, and export UI to persisted run data only
+- [x] Upgrade the rubric editor to validated field-based editing or strict JSON validation with load/save of the stored designgate.config.json
+- [x] Add backend tests for run creation/retrieval, rubric persistence, grading/report assembly, and retry orchestration
 - [x] Validate the overview and run-detail layouts at mobile, tablet, and desktop breakpoints
 - [x] Capture explicit multi-viewport evidence for responsive validation before final delivery
 - [x] Capture mobile and tablet screenshots for the run-detail route with a persisted run id

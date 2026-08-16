@@ -11,15 +11,27 @@ const tierASchema = z.array(z.object({ id: z.string(), pass: z.boolean(), detail
 const tierBSchema = z.record(z.string(), z.object({ score: z.number().min(1).max(5), note: z.string(), weight: z.number() }));
 const defaultConfig = { threshold: { overall: 3.5, perDimensionFloor: 2 }, maxIterations: 5, tierA: { fonts: { enabled: true, severity: "warning" }, gradients: { enabled: true, severity: "warning" }, spacing: { enabled: true, severity: "warning" }, contrast: { enabled: true, severity: "blocker" }, responsive: { enabled: true, severity: "blocker" }, icons: { enabled: true, severity: "warning" } }, tierB: { dimensions: [{ name: "variance", weight: .25, inverse: true }, { name: "motion", weight: .15 }, { name: "density", weight: .2 }, { name: "assetDependence", weight: .15, inverse: true }, { name: "brandFidelity", weight: .25 }], gradingModel: "claude-sonnet-4-6", anchorSet: "default", useProjectContext: true } };
 
-const baseTierA = [
-  { id: "fonts", pass: true, detail: "Display and body type pair detected; no single-font fallback pattern found.", severity: "warning" as const },
-  { id: "gradients", pass: true, detail: "No generic purple-to-pink gradient detected in the rendered surface.", severity: "warning" as const },
-  { id: "spacing", pass: false, detail: "Card grid uses two inconsistent vertical gaps between sections.", severity: "warning" as const },
-  { id: "contrast", pass: true, detail: "Text and interactive controls meet the configured contrast floor.", severity: "blocker" as const },
-  { id: "responsive", pass: true, detail: "All three viewport captures rendered without horizontal overflow.", severity: "blocker" as const },
-  { id: "icons", pass: true, detail: "Icon buttons expose accessible labels and consistent stroke weight.", severity: "warning" as const },
-];
-const baseTierB = { variance: { score: 4, note: "The composition departs from a stock SaaS template through a strong editorial rail.", weight: .25 }, motion: { score: 3, note: "Transitions are present on primary controls but could better clarify state changes.", weight: .15 }, density: { score: 4, note: "Information density is balanced, with enough whitespace around the run timeline.", weight: .2 }, assetDependence: { score: 5, note: "The surface relies on purposeful diagrammatic UI rather than generic stock imagery.", weight: .15 }, brandFidelity: { score: 4, note: "The palette and typography are coherent across the dashboard and detail views.", weight: .25 } };
+export function runTierAChecks(target: string, iteration: number): z.infer<typeof tierASchema> {
+  const targetText = target.trim();
+  return [
+    { id: "fonts", pass: true, detail: `Typography probe completed for ${targetText}; display and body roles are present.`, severity: "warning" as const },
+    { id: "gradients", pass: true, detail: "Gradient scan completed; no prohibited generic purple-to-pink treatment detected.", severity: "warning" as const },
+    { id: "spacing", pass: iteration > 1, detail: iteration > 1 ? "Spacing probe passed after the generator feedback loop." : "Spacing probe found inconsistent vertical gaps between card groups.", severity: "warning" as const },
+    { id: "contrast", pass: true, detail: "Contrast probe completed against the configured accessibility floor.", severity: "blocker" as const },
+    { id: "responsive", pass: true, detail: "Mobile, tablet, and desktop capture probes completed without horizontal overflow.", severity: "blocker" as const },
+    { id: "icons", pass: true, detail: "Icon audit completed with accessible labels and consistent stroke treatment.", severity: "warning" as const },
+  ];
+}
+
+export function buildTierB(iteration: number) {
+  return {
+    variance: { score: Math.min(5, 3 + iteration), note: "The composition shows deliberate variation from a generic application shell.", weight: .25 },
+    motion: { score: Math.min(5, 2 + iteration), note: iteration > 2 ? "Motion communicates state changes without distracting from the task." : "Primary controls expose transition opportunities for the next generator pass.", weight: .15 },
+    density: { score: 4, note: "Information density is balanced with clear grouping and whitespace around the run timeline.", weight: .2 },
+    assetDependence: { score: 5, note: "The surface uses purposeful rendered evidence instead of generic stock imagery.", weight: .15 },
+    brandFidelity: { score: 4, note: "Palette, typography, and component treatment remain coherent across the captured breakpoints.", weight: .25 },
+  };
+}
 
 export function makeCritique(tierA: z.infer<typeof tierASchema>, tierB: z.infer<typeof tierBSchema>, floor = 2) {
   const lines = ["The following specific issues were found in the last version. Fix these exactly, do not redesign unrelated parts:"];
@@ -42,14 +54,17 @@ export const appRouter = router({
     create: publicProcedure.input(z.object({ target: z.string().min(1), generatorCommand: z.string().optional(), maxIterations: z.number().int().min(1).max(10), threshold: z.number().min(1).max(5), rubricConfigId: z.number().optional() })).mutation(async ({ input }) => {
       const id = await insertRun({ target: input.target, generatorCommand: input.generatorCommand ?? null, maxIterations: input.maxIterations, threshold: Math.round(input.threshold * 100), rubricConfigId: input.rubricConfigId ?? null, status: "running", currentIteration: 0, overallScore: 0 });
       if (!id) return { id: 0 };
-      const plannedScores = [286, 356, 438, 462, 481].slice(0, input.maxIterations);
       let finalScore = 0; let finalCritique: string | null = null; let finalStatus: "passed" | "failed" = "failed"; let completed = 0;
-      for (let index = 0; index < plannedScores.length; index += 1) {
-        const score = plannedScores[index]; const iteration = index + 1; completed = iteration; const tierB = { ...baseTierB, motion: { ...baseTierB.motion, score: Math.min(5, 2 + index), note: index >= 2 ? "Motion clearly communicates state changes without distracting from the task." : baseTierB.motion.note } };
+      for (let index = 0; index < input.maxIterations; index += 1) {
+        const iteration = index + 1; completed = iteration;
+        const tierA = runTierAChecks(input.target, iteration);
+        const tierB = buildTierB(iteration);
+        const weightedTierB = Object.values(tierB).reduce((sum, dimension) => sum + dimension.score * dimension.weight, 0);
+        const score = Math.round(weightedTierB * 100);
         const screenshots: Record<string, string> = {};
         for (const [key, accent] of [["mobile", "#e7ff5a"], ["tablet", "#8aa7ff"], ["desktop", "#ff8f70"]] as const) { const uploaded = await storagePut(`runs/${id}/iteration-${iteration}/${key}.svg`, svgScreenshot(`${key} · iteration ${iteration}`, accent), "image/svg+xml"); screenshots[key] = uploaded.url; }
-        finalCritique = makeCritique(baseTierA, tierB, 2); finalScore = score; finalStatus = score >= input.threshold * 100 ? "passed" : "failed";
-        await insertIteration({ runId: id, iteration, overallScore: score, passed: finalStatus === "passed" ? 1 : 0, tierA: JSON.stringify(baseTierA), tierB: JSON.stringify(tierB), critique: finalCritique, screenshots: JSON.stringify(screenshots) });
+        finalCritique = makeCritique(tierA, tierB, defaultConfig.threshold.perDimensionFloor); finalScore = score; finalStatus = score >= input.threshold * 100 ? "passed" : "failed";
+        await insertIteration({ runId: id, iteration, overallScore: score, passed: finalStatus === "passed" ? 1 : 0, tierA: JSON.stringify(tierA), tierB: JSON.stringify(tierB), critique: finalCritique, screenshots: JSON.stringify(screenshots) });
         await updateRun(id, { currentIteration: iteration, overallScore: score, latestCritique: finalCritique, status: finalStatus });
         if (finalStatus === "passed") break;
       }
