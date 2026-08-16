@@ -111,3 +111,10 @@
 - [ ] Set the repository remote to https://github.com/HosnainRafi/AI-fine-graded.git without duplicating origin
 - [ ] Push the complete audited DesignGate source and documentation to the main branch
 - [ ] Verify the remote branch and key repository contents
+
+## GitHub write-access retry
+
+- [ ] Validate the newly supplied GitHub token against the GitHub API
+- [ ] Confirm write permission for HosnainRafi/AI-fine-grained
+- [ ] Push the complete DesignGate main branch if authorized
+- [ ] Verify the remote branch and repository contents or document the exact permission fix required
