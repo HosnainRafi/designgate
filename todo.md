@@ -95,26 +95,26 @@
 
 ## GitHub release distribution
 
-- [ ] Review repository documentation, licensing, package metadata, and ignored files for external distribution
-- [ ] Create a new private GitHub repository under the supplied account
-- [ ] Push the complete DesignGate source, rules, CLI, workflows, tests, and usage documentation without secrets
-- [ ] Verify the repository contents and share the repository location
+- [x] Review repository documentation, licensing, package metadata, and ignored files for external distribution
+- [x] Superseded by the user’s request for public distribution
+- [x] Push the complete DesignGate source, rules, CLI, workflows, tests, and usage documentation without secrets
+- [x] Verify the repository contents and share the repository location
 
 ## Public GitHub distribution change
 
-- [ ] Create the requested public GitHub repository under the authenticated account
-- [ ] Push the audited DesignGate package and all documentation to the public repository without exposing credentials
-- [ ] Verify public repository visibility and expected files, then provide its URL
+- [x] Superseded by pushing to the user-created public repository
+- [x] Push the audited DesignGate package and all documentation to the public repository without exposing credentials
+- [x] Verify public repository visibility and expected files, then provide its URL
 
 ## Existing public repository push
 
-- [ ] Set the repository remote to https://github.com/HosnainRafi/AI-fine-graded.git without duplicating origin
-- [ ] Push the complete audited DesignGate source and documentation to the main branch
-- [ ] Verify the remote branch and key repository contents
+- [x] Set the repository remote to https://github.com/HosnainRafi/AI-fine-graded.git without duplicating origin
+- [x] Push the complete audited DesignGate source and documentation to the main branch
+- [x] Verify the remote branch and key repository contents
 
 ## GitHub write-access retry
 
-- [ ] Validate the newly supplied GitHub token against the GitHub API
-- [ ] Confirm write permission for HosnainRafi/AI-fine-grained
-- [ ] Push the complete DesignGate main branch if authorized
-- [ ] Verify the remote branch and repository contents or document the exact permission fix required
+- [x] Validate the newly supplied GitHub token against the GitHub API
+- [x] Confirm write permission for HosnainRafi/AI-fine-graded
+- [x] Push the complete DesignGate main branch if authorized
+- [x] Verify the remote branch and repository contents or document the exact permission fix required
