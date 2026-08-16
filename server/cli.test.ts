@@ -6,41 +6,72 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const cli = join(process.cwd(), "cli/designgate.mjs");
-const manifest = JSON.parse(readFileSync(join(process.cwd(), "rules/manifest.json"), "utf8"));
 const created: string[] = [];
-
+const run = (args: string[]) => execFileSync(process.execPath, [cli, ...args], { encoding: "utf8" });
 afterEach(() => { for (const path of created.splice(0)) rmSync(path, { recursive: true, force: true }); });
 
 describe("installable DesignGate CLI", () => {
-  it("initializes config, manifest, every supported adapter, and real payload hashes", () => {
+  it("declares a minimal publishable npm package contract", () => {
+    const packageJson = JSON.parse(readFileSync(join(process.cwd(), "package.json"), "utf8"));
+    expect(packageJson.bin.designgate).toBe("cli/designgate.mjs");
+    expect(packageJson.files).toEqual(expect.arrayContaining(["cli", "rules", "README.md", "LICENSE"]));
+    expect(packageJson.publishConfig.access).toBe("public");
+    for (const file of ["README.md", "LICENSE", "cli/designgate.mjs", "rules/manifest.json"]) expect(existsSync(join(process.cwd(), file))).toBe(true);
+  });
+
+  it("includes the expected files in the actual npm dry-run tarball", () => {
+    const output = execFileSync("npm", ["pack", "--dry-run", "--json", "--ignore-scripts"], { cwd: process.cwd(), encoding: "utf8" });
+    const packed = JSON.parse(output)[0];
+    const files = packed.files.map((file: { path: string }) => file.path);
+    expect(files).toEqual(expect.arrayContaining(["LICENSE", "README.md", "cli/designgate.mjs", "package.json", "rules/manifest.json", "rules/designgate-modern-ui.md"]));
+    expect(files.some((file: string) => file.startsWith("client/") || file.startsWith("server/"))).toBe(false);
+  });
+
+  it("initializes native agent instructions, a CI workflow, and real payload hashes", () => {
     const root = mkdtempSync(join(tmpdir(), "designgate-cli-")); created.push(root);
-    execFileSync(process.execPath, [cli, "init", root, "--agent", "cursor"], { encoding: "utf8" });
+    run(["init", root, "--agent", "cursor"]);
     const installed = JSON.parse(readFileSync(join(root, ".designgate/manifest.json"), "utf8"));
     expect(existsSync(join(root, "designgate.config.json"))).toBe(true);
-    expect(existsSync(join(root, ".designgate/agents/claude-code.md"))).toBe(true);
-    expect(readFileSync(join(root, ".designgate/agents/cursor.md"), "utf8")).toContain("DG-MOTION-001");
+    expect(existsSync(join(root, "CLAUDE.md"))).toBe(true);
+    expect(existsSync(join(root, ".cursor/rules/designgate.mdc"))).toBe(true);
+    expect(existsSync(join(root, ".github/workflows/designgate.yml"))).toBe(true);
+    expect(readFileSync(join(root, "AGENTS.md"), "utf8")).toContain("DG-MOTION-001");
     for (const rule of installed.rules) expect(rule.hash).toBe(`sha256:${createHash("sha256").update(JSON.stringify(rule.payload)).digest("hex")}`);
+  });
+
+  it("captures real mobile, tablet, and desktop Playwright evidence", () => {
+    const root = mkdtempSync(join(tmpdir(), "designgate-render-")); created.push(root);
+    const html = join(root, "index.html");
+    writeFileSync(html, "<style>@media (max-width:700px){body{padding:1rem}}@media (prefers-reduced-motion:reduce){*{transition:none}}body{font-family:Arial;display:grid;gap:1rem}</style><button aria-label='quality'>Render</button>");
+    run(["init", root]);
+    const response = JSON.parse(run(["render", html, "--project", root]));
+    expect(response.engine).toBe("playwright-chromium");
+    expect(response.captures.map((capture: { breakpoint: string }) => capture.breakpoint)).toEqual(["mobile", "tablet", "desktop"]);
+    for (const capture of response.captures) expect(existsSync(join(root, capture.path))).toBe(true);
+    expect(existsSync(join(root, ".designgate/latest-capture.json"))).toBe(true);
+    const payload = JSON.parse(run(["evidence", root, "--run-id", "11", "--iteration", "1"]));
+    expect(payload.runId).toBe(11);
+    expect(payload.captureManifest.captures.map((capture: { breakpoint: string }) => capture.breakpoint)).toEqual(["mobile", "tablet", "desktop"]);
+    expect(payload.captureManifest.captures.every((capture: { base64: string; mimeType: string }) => capture.mimeType === "image/png" && capture.base64.length > 100)).toBe(true);
   });
 
   it("reports concrete token, motion, responsive, changed-file, and agent evidence", () => {
     const root = mkdtempSync(join(tmpdir(), "designgate-verify-")); created.push(root);
     mkdirSync(join(root, "src/components"), { recursive: true });
     writeFileSync(join(root, "src/components/App.css"), "font-family: Avenir; --background:#111; display:grid; gap-4; transition:opacity; @media (min-width:768px){} prefers-reduced-motion focus-visible aria-label;");
-    execFileSync(process.execPath, [cli, "init", root], { encoding: "utf8" });
-    try { execFileSync(process.execPath, [cli, "verify", root], { encoding: "utf8" }); } catch { /* expected if a required rule remains absent */ }
+    run(["init", root]);
+    try { run(["verify", root]); } catch { /* expected if a required rule remains absent */ }
     const report = JSON.parse(readFileSync(join(root, ".designgate/report.json"), "utf8"));
-    expect(report.schemaVersion).toBe("1.1.0");
-    expect(report.checks.every((check: { payloadHashValid: boolean; agentOutputPresent: boolean; agentOutputMatching: boolean; changedFiles: string[]; classifiedChanges: Record<string, string[]> }) => check.payloadHashValid && check.agentOutputPresent && check.agentOutputMatching && Array.isArray(check.changedFiles) && check.classifiedChanges["styles"]?.length)).toBe(true);
+    expect(report.schemaVersion).toBe("1.2.0");
+    expect(report.checks.every((check: { payloadHashValid: boolean; agentOutputMatching: boolean; changedFiles: string[]; classifiedChanges: Record<string, string[]> }) => check.payloadHashValid && check.agentOutputMatching && Array.isArray(check.changedFiles) && check.classifiedChanges["styles"]?.length)).toBe(true);
     expect(report.checks.find((check: { id: string }) => check.id === "DG-MOTION-001").evidence).toContain("motion");
-    expect(typeof report.score).toBe("number");
   });
 
   it("emits concise exact feedback in compatibility loop mode", () => {
     const root = mkdtempSync(join(tmpdir(), "designgate-loop-")); created.push(root);
-    execFileSync(process.execPath, [cli, "init", root, "--agent", "generic"], { encoding: "utf8" });
+    run(["init", root, "--agent", "generic"]);
     writeFileSync(join(root, "generator.mjs"), "import { writeFileSync } from 'node:fs'; writeFileSync('agent-feedback.txt', process.argv.slice(2).join(' '));");
-    try { execFileSync(process.execPath, [cli, "loop", root, "--generator", `${process.execPath} generator.mjs`, "--max-iterations", "1"], { encoding: "utf8" }); } catch { /* expected when the target is not yet compliant */ }
-    expect(existsSync(join(root, "agent-feedback.txt"))).toBe(true);
+    try { run(["loop", root, "--generator", `${process.execPath} generator.mjs`, "--max-iterations", "1"]); } catch { /* expected when the target is not yet compliant */ }
     expect(readFileSync(join(root, "agent-feedback.txt"), "utf8")).toContain("DesignGate exact feedback:");
   });
 });

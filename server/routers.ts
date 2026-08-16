@@ -5,7 +5,7 @@ import { invokeLLM } from "./_core/llm";
 import { storagePut } from "./storage";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
-import { getIterations, getRun, getRubric, insertIteration, insertRun, listRubrics, listRuns, saveRubric, updateRun } from "./db";
+import { getIteration, getIterations, getRun, getRubric, insertIteration, insertRun, listRubrics, listRuns, saveRubric, updateIterationScreenshots, updateRun } from "./db";
 
 const tierASchema = z.array(z.object({ id: z.string(), pass: z.boolean(), detail: z.string(), severity: z.enum(["blocker", "warning"]) }));
 const tierBSchema = z.record(z.string(), z.object({ score: z.number().min(1).max(5), note: z.string(), weight: z.number() }));
@@ -58,6 +58,19 @@ export const appRouter = router({
     list: publicProcedure.query(() => listRuns()),
     get: publicProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => { const run = await getRun(input.id); if (!run) return null; const rawIterations = await getIterations(input.id); const iterations = rawIterations.map(item => ({ ...item, tierA: JSON.parse(item.tierA), tierB: JSON.parse(item.tierB), screenshots: JSON.parse(item.screenshots) })); return { run, iterations }; }),
     report: publicProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => { const run = await getRun(input.id); if (!run) return null; const iterations = (await getIterations(input.id)).map(item => ({ ...item, tierA: JSON.parse(item.tierA), tierB: JSON.parse(item.tierB), screenshots: JSON.parse(item.screenshots) })); const latest = iterations.at(-1); return { target: run.target, timestamp: run.updatedAt, overallScore: run.overallScore / 100, passed: run.status === "passed", tierA: latest?.tierA ?? [], tierB: latest?.tierB ?? {}, iteration: run.currentIteration, critique: run.latestCritique, iterations }; }),
+    importEvidence: publicProcedure.input(z.object({ runId: z.number().int().positive(), iteration: z.number().int().positive(), captureManifest: z.object({ engine: z.string(), renderedAt: z.string(), target: z.string(), captures: z.array(z.object({ breakpoint: z.enum(["mobile", "tablet", "desktop"]), mimeType: z.enum(["image/png", "image/jpeg"]), base64: z.string().min(1).max(8_000_000), viewport: z.object({ width: z.number().int().positive(), height: z.number().int().positive() }) })).length(3) }) })).mutation(async ({ input }) => {
+      const record = await getIteration(input.runId, input.iteration);
+      if (!record) throw new Error(`Run ${input.runId} has no iteration ${input.iteration}.`);
+      const screenshots: Record<string, { url: string; viewport: { width: number; height: number }; engine: string; renderedAt: string }> = {};
+      for (const capture of input.captureManifest.captures) {
+        const bytes = Buffer.from(capture.base64, "base64");
+        const extension = capture.mimeType === "image/jpeg" ? "jpg" : "png";
+        const uploaded = await storagePut(`runs/${input.runId}/iteration-${input.iteration}/${capture.breakpoint}.${extension}`, bytes, capture.mimeType);
+        screenshots[capture.breakpoint] = { url: uploaded.url, viewport: capture.viewport, engine: input.captureManifest.engine, renderedAt: input.captureManifest.renderedAt };
+      }
+      await updateIterationScreenshots(input.runId, input.iteration, JSON.stringify(screenshots));
+      return { runId: input.runId, iteration: input.iteration, screenshots, imported: true };
+    }),
     create: publicProcedure.input(z.object({ target: z.string().min(1), generatorCommand: z.string().optional(), maxIterations: z.number().int().min(1).max(10), threshold: z.number().min(1).max(5), rubricConfigId: z.number().optional() })).mutation(async ({ input }) => {
       const id = await insertRun({ target: input.target, generatorCommand: input.generatorCommand ?? null, maxIterations: input.maxIterations, threshold: Math.round(input.threshold * 100), rubricConfigId: input.rubricConfigId ?? null, status: "running", currentIteration: 0, overallScore: 0 });
       if (!id) return { id: 0 };

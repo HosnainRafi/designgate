@@ -64,3 +64,31 @@
 - [x] Add tests for hash validity, compatibility feedback, and concrete verifier evidence paths
 - [x] Capture a fresh tablet preview after the final dashboard change
 - [x] Save the final audited checkpoint after all corrections
+
+## Npm publishing, real renderer, and CI expansion
+
+- [x] Prepare npm distribution metadata, package contents, release scripts, and publication documentation
+- [x] Add a real Playwright renderer that captures desktop, tablet, and mobile screenshots for URL and local targets
+- [x] Store renderer evidence in the existing S3-backed iteration format and surface capture metadata in reports
+- [x] Generate native agent instruction files for Claude Code, Cursor, Codex CLI, Gemini CLI, Copilot, and generic projects
+- [x] Generate pull-request CI enforcement for GitHub Actions with install, render, verify, and report-artifact steps
+- [x] Add tests for package publication contents, renderer contracts, instruction writers, and CI workflow generation
+- [x] Re-run typecheck, tests, build, CLI smoke tests, and responsive UI validation
+- [x] Save the final npm-renderer-CI checkpoint for delivery
+
+## Release evidence hardening
+
+- [x] Add a project-side evidence import contract that persists Playwright capture metadata into the existing run-iteration S3 evidence flow and returns it in reports
+- [x] Add automated package-content assertions for the publishable npm tarball contract
+- [x] Re-run end-to-end CLI, application, package, and responsive validation after release evidence hardening
+- [x] Save the final npm-renderer-CI checkpoint after release evidence hardening
+
+## Final package audit
+
+- [x] Add an automated `npm pack --dry-run --json` tarball-content assertion
+- [x] Capture fresh desktop, tablet, and mobile DesignGate previews after release hardening
+- [x] Save the final audited npm-renderer-CI checkpoint
+
+## Final release preservation
+
+- [ ] Save the audited npm-renderer-CI package state in a final checkpoint

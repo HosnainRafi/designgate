@@ -1,10 +1,14 @@
 {
   "name": "designgate",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "license": "MIT",
+  "description": "Installable design quality rules, browser rendering, and verification loops for any coding agent.",
+  "keywords": ["ai-agents", "design-system", "ui-quality", "playwright", "cli", "code-review"],
+  "engines": {"node": ">=20"},
+  "publishConfig": {"access": "public"},
   "bin": {"designgate": "cli/designgate.mjs"},
-  "files": ["cli", "rules", "adapters", "templates", "README.md", "designgate.config.json"],
+  "files": ["cli", "rules", "adapters", "templates", "README.md", "LICENSE", "designgate.config.json"],
   "scripts": {
     "dev": "NODE_ENV=development tsx watch server/_core/index.ts",
     "build": "vite build && esbuild server/_core/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
@@ -14,7 +18,10 @@
     "test": "vitest run",
     "db:push": "drizzle-kit generate && drizzle-kit migrate",
     "designgate": "node cli/designgate.mjs",
-    "designgate:verify": "node cli/designgate.mjs verify ."
+    "designgate:verify": "node cli/designgate.mjs verify .",
+    "designgate:render": "node cli/designgate.mjs render",
+    "prepack": "pnpm check && pnpm test",
+    "pack:dry-run": "npm pack --dry-run"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.693.0",
@@ -67,6 +74,7 @@
     "mysql2": "^3.15.0",
     "nanoid": "^5.1.5",
     "next-themes": "^0.4.6",
+    "playwright": "^1.55.0",
     "react": "^19.2.1",
     "react-day-picker": "^9.11.1",
     "react-dom": "^19.2.1",

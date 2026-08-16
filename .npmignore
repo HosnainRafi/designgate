@@ -1,0 +1,10 @@
+.manus-logs
+.project-config.json
+client
+server
+drizzle
+dist
+node_modules
+tests
+*.test.*
+
