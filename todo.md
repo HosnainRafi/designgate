@@ -92,3 +92,16 @@
 ## Final release preservation
 
 - [x] Save the audited npm-renderer-CI package state in a final checkpoint
+
+## GitHub release distribution
+
+- [ ] Review repository documentation, licensing, package metadata, and ignored files for external distribution
+- [ ] Create a new private GitHub repository under the supplied account
+- [ ] Push the complete DesignGate source, rules, CLI, workflows, tests, and usage documentation without secrets
+- [ ] Verify the repository contents and share the repository location
+
+## Public GitHub distribution change
+
+- [ ] Create the requested public GitHub repository under the authenticated account
+- [ ] Push the audited DesignGate package and all documentation to the public repository without exposing credentials
+- [ ] Verify public repository visibility and expected files, then provide its URL
