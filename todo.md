@@ -242,7 +242,7 @@
 - [x] Add workspace/project isolation, scoped roles, review states, audit events, retention policies, usage quotas, and a durable worker-job model
 - [x] Implement a secured team administration and operations dashboard
 - [x] Configure no-cost user-triggered execution and manual retention cleanup for the selected hosting model instead of an always-on worker
-- [ ] Validate, merge to protected main, restore protection, and publish the team-ready release
+- [x] Validate, merge to protected main, restore protection, and publish the team-ready release
 
 ## Live public repository re-audit
 
@@ -258,4 +258,4 @@
 - [x] Add configurable project retention policies and safe manual cleanup controls
 - [x] Add per-workspace usage quotas and transparent quota reporting without new API keys
 - [x] Build access-aware dashboard views for projects, jobs, reviews, audit events, retention, and quotas
-- [ ] Add no-cost operating documentation, tests, migration validation, responsive verification, GitHub synchronization, and checkpoint
+- [x] Add no-cost operating documentation, tests, migration validation, responsive verification, GitHub synchronization, and checkpoint
