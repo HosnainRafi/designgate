@@ -32,8 +32,8 @@
 - [x] Decide whether to rename the public repository from `AI-fine-graded` to `designgate` after documenting migration implications
 - [x] Document the DesignGate repository rename, GitHub redirect behavior, canonical URL, local-remote update, and downstream reference updates
 - [x] Validate the renamed public repository end-to-end across README/docs/package metadata/workflow badge/skill installation/local remote/public URL
-- [ ] Validate the standalone CLI path, documentation links, tests, build, and public GitHub synchronization
-- [ ] Save and publish the final standalone-grading checkpoint
+- [x] Validate the standalone CLI path, documentation links, tests, build, and public GitHub synchronization
+- [x] Save and publish the final standalone-grading checkpoint
 
 - [x] Persist run configurations with target, generator command, max iterations, threshold, status, timestamps, and iteration history
 - [x] Persist rubric configurations in the database under the exact config filename designgate.config.json
@@ -160,7 +160,7 @@
 - [x] Add preset selection to CLI init/rules/verify flows and document usage
 - [x] Add npm publication readiness checks, version/release scripts, and clean-project smoke coverage
 - [x] Add GitHub Actions quality-gate workflow and required-check documentation
-- [ ] Configure branch protection on HosnainRafi/AI-fine-graded when the token grants administration permission (current token returns 403; requires repository administration permission)
+- [x] Configure branch protection on HosnainRafi/designgate with verify-ui and one required approval
 - [x] Run typecheck, tests, build, npm dry-run, and clean-project `npx designgate init .` validation
 - [x] Save the final release-operations checkpoint
 
@@ -177,9 +177,9 @@
 - [x] Add a reference-project mapping, licensing guidance, and clear distinction between adapted patterns and DesignGate’s novel enforced loop
 - [x] Add a practical repository-scaling roadmap covering modular CLI architecture, worker queue, storage, database, vision grading, security, observability, and CI
 - [x] Add troubleshooting, release, npm publishing, S3 evidence-import, and branch-protection operations documentation
-- [ ] Add a documented update-and-push procedure and push each validated documentation update to GitHub
-- [ ] Validate documentation links, package commands, tests, build, and repository synchronization
-- [ ] Save the final documentation checkpoint and provide the completed guide
+- [x] Add a documented update-and-push procedure and push each validated documentation update to GitHub
+- [x] Validate documentation links, package commands, tests, build, and repository synchronization
+- [x] Save the final documentation checkpoint and provide the completed guide
 
 ## Comprehensive documentation and scalable adoption (active tracking)
 
@@ -191,6 +191,6 @@
 - [x] Add a reference-project mapping, licensing guidance, and clear distinction between adapted patterns and DesignGate’s novel enforced loop
 - [x] Add a practical repository-scaling roadmap covering modular CLI architecture, worker queue, storage, database, vision grading, security, observability, and CI
 - [x] Add troubleshooting, release, npm publishing, S3 evidence-import, and branch-protection operations documentation
-- [ ] Add a documented update-and-push procedure and push each validated documentation update to GitHub
-- [ ] Validate documentation links, package commands, tests, build, and repository synchronization
-- [ ] Save the final documentation checkpoint and provide the completed guide
+- [x] Add a documented update-and-push procedure and push each validated documentation update to GitHub
+- [x] Validate documentation links, package commands, tests, build, and repository synchronization
+- [x] Save the final documentation checkpoint and provide the completed guide
