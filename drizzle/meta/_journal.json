@@ -15,6 +15,13 @@
       "when": 1786862083945,
       "tag": "0001_dark_silver_surfer",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1786885463087,
+      "tag": "0002_short_mordo",
+      "breakpoints": true
     }
   ]
 }

@@ -1,0 +1,44 @@
+{
+  "id": "immersive3d",
+  "name": "Immersive 3D UI",
+  "version": "1.0.0",
+  "description": "Additive deterministic and vision-assisted checks for WebGL and immersive interfaces.",
+  "ruleExtensions": [
+    {
+      "id": "DG-3D-001",
+      "category": "immersive3d",
+      "required": true,
+      "instruction": "When 3D is required, render a real canvas with a WebGL context; do not fake 3D with a flat background image."
+    },
+    {
+      "id": "DG-3D-002",
+      "category": "immersive3d",
+      "required": true,
+      "instruction": "Use a legitimate supported 3D dependency such as Three.js, React Three Fiber, or Babylon.js."
+    },
+    {
+      "id": "DG-DEPTH-001",
+      "category": "immersive3d",
+      "required": true,
+      "instruction": "Provide depth or parallax through a pointer- or scroll-triggered transform that is visible in captured evidence."
+    },
+    {
+      "id": "DG-INTERACT-001",
+      "category": "immersive3d",
+      "required": true,
+      "instruction": "Make the 3D surface respond to a synthetic pointer or scroll interaction with a measurable canvas-region change."
+    },
+    {
+      "id": "DG-PERF-001",
+      "category": "immersive3d",
+      "required": true,
+      "instruction": "Keep Largest Contentful Paint and main-thread long tasks within the configured immersive performance budget."
+    }
+  ],
+  "tierB": {
+    "name": "immersiveness",
+    "weight": 0.2,
+    "condition": "only scored when the immersive3d extension is enabled",
+    "instruction": "Score whether the 3D elements feel deliberate, premium, and content-enhancing rather than a generic template bolted onto a flat page."
+  }
+}

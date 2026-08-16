@@ -20,6 +20,14 @@ describe("DesignGate orchestration", () => {
     expect(secondScore).toBeGreaterThan(firstScore);
   });
 
+  it("adds the conditional immersiveness dimension for immersive3d runs", () => {
+    const first = buildTierB(1, true);
+    const second = buildTierB(2, true);
+    expect(Object.keys(first)).toEqual(["variance", "motion", "density", "assetDependence", "brandFidelity", "immersiveness"]);
+    expect(first.immersiveness.weight).toBe(0.2);
+    expect(second.immersiveness.score).toBeGreaterThan(first.immersiveness.score);
+  });
+
   it("formats a failed deterministic check as the exact generator instruction", () => {
     const checks = runTierAChecks("https://example.test", 1);
     const critique = makeCritique(checks, buildTierB(1), 4);

@@ -328,3 +328,33 @@ For operational procedures, see [Operations and Release Guide](OPERATIONS.md). F
 [2] [AutoClaw](https://autoclaw.z.ai/) describes the desktop agent’s browser automation and web-product-building capabilities used in the integration workflow.
 
 [3] [Anthropic Messages API](https://docs.anthropic.com/en/api/messages) documents the API endpoint and image-message format used by the optional standalone vision-grading path.
+
+
+## Immersive 3D extension and Goal Mode
+
+DesignGate’s updated 3D support is an **additive, opt-in extension**. Activate it with `--preset gaming-3d` or `extensions.immersive3d.enabled: true`. Legacy projects preserve their existing five Tier B dimensions and report shape when the extension is disabled.
+
+The extension manifest in `rules/extensions/immersive3d.json` adds these deterministic rule IDs:
+
+| Rule | Contract |
+| --- | --- |
+| `DG-3D-001` | A browser-rendered canvas/WebGL surface is present. |
+| `DG-3D-002` | A supported 3D dependency is declared, such as Three.js, React Three Fiber, Drei, or Babylon.js. |
+| `DG-DEPTH-001` | The captured experience exposes depth-oriented or spatial interaction evidence. |
+| `DG-INTERACT-001` | A synthetic pointer/scroll probe produces observable interaction evidence. |
+| `DG-PERF-001` | The browser evidence records LCP and long-task measurements. |
+
+Every immersive run still captures mobile, tablet, and desktop evidence. Tier B adds the conditional `immersiveness` dimension at weight `0.20`; the original five dimensions are normalized to the remaining `0.80`. The vision prompt evaluates depth, spatial hierarchy, camera/interaction affordance, and restraint. The first release evaluates browser-rendered evidence; it does not claim to inspect arbitrary mesh topology, asset licensing, AR/VR runtime behavior, or polygon budgets.
+
+Goal Mode converts a one-line goal into a deterministic structured brief. The maintained category table currently supports **gaming**, **portfolio**, and **ecommerce**. An unknown category fails explicitly rather than selecting a hidden stack.
+
+```bash
+npx designgate@latest plan "Build a multiplayer 3D game with a cinematic lobby" --project .
+npx designgate@latest build "Build a multiplayer 3D game with a cinematic lobby" \
+  --generator "npm run agent:generate" \
+  --project . --target http://localhost:3000 --grade
+```
+
+`plan` writes `.designgate/goal-brief.json` with the selected category, maintained stack, sections, mood keywords, required capabilities, enabled extensions, and generator prompt text. `build` passes the brief and Phase-0 context to the existing generator, renderer, verifier, inline Tier B grader, and bounded retry loop. Goal text is preserved verbatim in generator feedback. The category table is maintained in `config/goal-categories.json`; the extension contract is maintained in `rules/extensions/immersive3d.json`.
+
+> **Opt-in and backward compatibility:** projects without Goal Mode or `immersive3d` configuration continue to use the existing `init`, `render`, `verify`, `check`, `grade`, and `loop` behavior unchanged.

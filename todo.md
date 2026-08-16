@@ -1,5 +1,17 @@
 # Project TODO
 
+## Updated 3D and Goal Mode requirements
+
+- [x] Add additive immersive3d extension manifest with DG-3D-001, DG-3D-002, DG-DEPTH-001, DG-INTERACT-001, and DG-PERF-001
+- [x] Add conditional Tier B immersiveness dimension with normalized six-dimension weights
+- [x] Add browser evidence for canvas/WebGL, supported 3D dependency, depth interaction, synthetic interaction, LCP, and long tasks
+- [x] Add Goal Mode stack decision table for gaming, portfolio, and ecommerce
+- [x] Add `designgate plan` with deterministic structured goal brief and explicit unknown-category failure
+- [x] Add `designgate build` with plan-to-generator prompt handoff and existing render/check/loop integration
+- [x] Preserve legacy behavior when 3D extensions and Goal Mode are not enabled
+- [x] Add focused tests, documentation, visual proof, full validation, public-main synchronization, and final checkpoint for the new feature set
+
+
 ## Standalone Tier B and public-launch hardening
 
 - [x] Add inline CLI Tier B vision grading behind `designgate loop --grade` without requiring the hosted dashboard
