@@ -1,5 +1,28 @@
 # Project TODO
 
+## Standalone Tier B and public-launch hardening
+
+- [x] Add inline CLI Tier B vision grading behind `designgate loop --grade` without requiring the hosted dashboard
+- [x] Add retry/backoff and one strict JSON retry for transient standalone vision-grading API failures
+- [x] Support a documented Claude-compatible bring-your-own-key vision API path with structured Tier B scores and exact critique feedback
+- [x] Render mobile, tablet, and desktop evidence inside the graded CLI loop and force retries on combined Tier A and Tier B failure
+- [x] Add Phase-0 context detection that inventories existing design tokens and reusable components before agents generate UI
+- [x] Pass the detected Phase-0 project context to the generator before the first loop iteration and test that first-call contract
+- [x] Document `gradingModel: "auto"`, provider resolution, environment variables, and safe no-key behavior plainly
+- [x] Add CLI tests for inline vision grading, retry feedback, no-key behavior, and detected project context
+- [x] Add genuine visual product evidence and a sample report to the README
+- [x] Configure GitHub repository description, homepage, and discovery topics
+- [x] Add README badges for npm, license, and verification workflow
+- [x] Verify the npm publication state or replace the npm version badge with a truthful pre-publication badge
+- [x] Validate the rendered README badges, documentation links, and uploaded dashboard screenshot asset
+- [x] Validate all README and documentation links after the latest standalone-grading edits, including local guide links and public references
+- [x] Run a complete Markdown link-validation pass across README.md and docs/*.md, including relative destinations, anchor fragments, badges, and public URLs
+- [x] Decide whether to rename the public repository from `AI-fine-graded` to `designgate` after documenting migration implications
+- [x] Document the DesignGate repository rename, GitHub redirect behavior, canonical URL, local-remote update, and downstream reference updates
+- [x] Validate the renamed public repository end-to-end across README/docs/package metadata/workflow badge/skill installation/local remote/public URL
+- [ ] Validate the standalone CLI path, documentation links, tests, build, and public GitHub synchronization
+- [ ] Save and publish the final standalone-grading checkpoint
+
 - [x] Persist run configurations with target, generator command, max iterations, threshold, status, timestamps, and iteration history
 - [x] Persist rubric configurations in the database under the exact config filename designgate.config.json
 - [x] Add typed backend procedures for runs, iterations, rubric configs, report retrieval, and exports

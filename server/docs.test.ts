@@ -17,15 +17,18 @@ describe("DesignGate documentation and OpenClaw skill contract", () => {
     const guide = read("docs/GUIDE.md");
     for (const value of ["Tier A", "Tier B", "variance", "motion", "density", "assetDependence", "brandFidelity", "designgate.config.json", "390 × 844", "834 × 1112", "1440 × 1000", "verbatim"]) expect(guide).toContain(value);
     expect(guide).toContain("runs/<runId>/iteration-<iteration>/");
+    for (const value of ["loop --grade", "ANTHROPIC_API_KEY", "claude-sonnet-4-6", "DESIGNGATE_ANTHROPIC_MODEL", "project-context.json", "schemaVersion: \"1.3.0\""]) expect(guide).toContain(value);
   });
 
   it("provides an installable OpenClaw skill with a safe verification workflow", () => {
     const skill = read("SKILL.md");
     expect(skill).toContain("name: designgate");
     expect(skill).toContain("npx designgate@latest init");
-    expect(skill).toContain("detail` strings exactly");
+    expect(skill).toContain("Tier B critique exactly as written");
     const autoclaw = read("docs/AUTOCLAW_DESKTOP.md");
-    expect(autoclaw).toContain("openclaw skills install git:HosnainRafi/AI-fine-graded@main --as designgate");
+    expect(autoclaw).toContain("openclaw skills install git:HosnainRafi/designgate@main --as designgate");
     expect(autoclaw).toContain("$designgate");
+    expect(autoclaw).toContain("--grade");
+    expect(autoclaw).toContain("ANTHROPIC_API_KEY");
   });
 });
