@@ -216,6 +216,6 @@
 - [x] Add mocked unit coverage for each provider and unsupported-vision failure paths
 - [x] Publish the package to npm and replace the pre-publication README badge with the live npm version badge
 - [x] Create and publish a small public failing-to-passing loop-grade demo repository
-- [ ] Validate, merge, restore protection, save a final checkpoint, and report npm/demo URLs
+- [x] Validate, merge, restore protection, save a final checkpoint, and report npm/demo URLs
 
 - [x] Add and document a two-provider golden-set sanity-check workflow that validates score shape and acceptable ranges across Anthropic and OpenAI-compatible providers
