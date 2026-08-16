@@ -107,21 +107,39 @@ The current grading contract surfaces these exact dimension names:
 
 The dashboard score view, critique viewer, and iteration history preserve the relationship between a capture, its rubric, its Tier A checks, and its Tier B outcome. The standalone CLI writes the equivalent Tier B object to `.designgate/report.json`. **Fix instructions shown by the critique viewer or emitted in the CLI report must be forwarded to the generator verbatim.** Do not summarize or paraphrase them; the text is the review contract for the next iteration.
 
-### Standalone Claude-compatible grading
+### Standalone provider-agnostic grading
 
-Set `ANTHROPIC_API_KEY` in the shell that runs the CLI, then request grading explicitly. DesignGate submits only the three rendered PNG captures and the fixed grading prompt to the configured Anthropic-compatible endpoint. It uses `https://api.anthropic.com` by default; set `ANTHROPIC_BASE_URL` only when intentionally using a compatible proxy. The public Anthropic Messages API is documented by Anthropic. [3]
+Set a provider key in the shell that runs the CLI, then request grading explicitly. DesignGate submits only the three rendered PNG captures and the fixed grading prompt to the configured vision endpoint. Anthropic is the backward-compatible default. A plain string such as `"claude-sonnet-4-6"` continues to resolve to Anthropic; an object selects the provider, base URL, model, and environment-variable name without storing the secret in project configuration.
+
+| Provider | Config example | Required environment variable | Request shape |
+| --- | --- | --- | --- |
+| Anthropic | `{ "provider": "anthropic", "model": "claude-sonnet-4-6", "apiKeyEnvVar": "ANTHROPIC_API_KEY", "baseUrl": "https://api.anthropic.com", "supportsVision": true }` | `ANTHROPIC_API_KEY` | Anthropic Messages API |
+| Mistral Pixtral | `{ "provider": "openai-compatible", "baseUrl": "https://api.mistral.ai/v1", "model": "pixtral-large-latest", "apiKeyEnvVar": "MISTRAL_API_KEY", "supportsVision": true }` | `MISTRAL_API_KEY` | OpenAI-compatible `/chat/completions` |
+| OpenRouter | `{ "provider": "openai-compatible", "baseUrl": "https://openrouter.ai/api/v1", "model": "google/gemini-2.0-flash-001", "apiKeyEnvVar": "OPENROUTER_API_KEY", "supportsVision": true }` | `OPENROUTER_API_KEY` | OpenAI-compatible `/chat/completions` |
+
+For a custom endpoint, use the same `openai-compatible` provider and change only `baseUrl`, `model`, and `apiKeyEnvVar`. The provider validates `supportsVision` before sending any screenshot. If it is `false`, grading stops with an error naming the configured model and asking for a vision-capable model; it never silently falls back to text-only grading.
+
+```json
+{
+  "tierB": {
+    "gradingModel": {
+      "provider": "openai-compatible",
+      "baseUrl": "https://api.mistral.ai/v1",
+      "model": "pixtral-large-latest",
+      "apiKeyEnvVar": "MISTRAL_API_KEY",
+      "supportsVision": true
+    }
+  }
+}
+```
 
 ```bash
-export ANTHROPIC_API_KEY="your-key"
-
-# Render, Tier A verify, and Tier B grade a target in one standalone command.
+export MISTRAL_API_KEY="your-key"
 npx designgate@latest check http://localhost:3000 --project . --grade
-
-# Grade existing mobile/tablet/desktop captures.
 npx designgate@latest grade .
 ```
 
-If `ANTHROPIC_API_KEY` is absent, `--grade` and `grade` stop before making a network request and print an actionable setup message. They do not silently downgrade a requested visual-quality gate into Tier A-only verification.
+If the configured environment variable is absent, `--grade` and `grade` stop before making a network request and print an actionable setup message. They do not silently downgrade a requested visual-quality gate into Tier A-only verification. Because providers can be stricter or more lenient than the Claude baseline, run the same representative screenshot set through at least two providers and sanity-check that weighted scores are in the same ballpark before changing project thresholds.
 
 ## Evidence and persistence
 

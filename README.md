@@ -1,6 +1,6 @@
 # DesignGate
 
-[![npm publication](https://img.shields.io/badge/npm-not%20published-6b7280.svg)](#publishing-to-npm) [![License: MIT](https://img.shields.io/badge/license-MIT-84cc16.svg)](LICENSE) [![verify-ui](https://github.com/HosnainRafi/designgate/actions/workflows/designgate.yml/badge.svg?branch=main)](https://github.com/HosnainRafi/designgate/actions/workflows/designgate.yml)
+[![npm version](https://img.shields.io/npm/v/designgate.svg)](https://www.npmjs.com/package/designgate) [![License: MIT](https://img.shields.io/badge/license-MIT-84cc16.svg)](LICENSE) [![verify-ui](https://github.com/HosnainRafi/designgate/actions/workflows/designgate.yml/badge.svg?branch=main)](https://github.com/HosnainRafi/designgate/actions/workflows/designgate.yml)
 
 DesignGate is an **installable, agent-agnostic UI quality gate**. It gives a coding agent explicit modern-design rules, detects the project’s existing design primitives, captures real browser evidence at mobile, tablet, and desktop widths, and combines deterministic **Tier A** verification with opt-in vision-based **Tier B** grading.
 
@@ -24,7 +24,7 @@ npx designgate@latest loop . \
   --grade --target http://localhost:3000 --max-iterations 5
 ```
 
-`--grade` is explicit: it sends the three captured images to the Claude-compatible vision endpoint using `ANTHROPIC_API_KEY`. With no key, the command fails before making a request; it never silently replaces a requested visual-quality check with Tier A-only verification. See [provider and model resolution](docs/GUIDE.md#tier-b-vision-grading) for `gradingModel: "auto"`, `DESIGNGATE_ANTHROPIC_MODEL`, and `ANTHROPIC_BASE_URL`.
+`--grade` is explicit: it sends the three captured images to the configured vision provider. Anthropic remains the default for backward compatibility, while `openai-compatible` supports Mistral, MiniMax, OpenRouter, z.ai, and other compatible endpoints. With no configured key, the command fails before making a request; it never silently replaces a requested visual-quality check with Tier A-only verification. See [provider-agnostic Tier B grading](docs/GUIDE.md#standalone-provider-agnostic-grading) for configuration examples.
 
 ### Sample combined report
 
@@ -58,7 +58,7 @@ For traceable source material used by the AutoClaw integration guide, see [resea
 npx designgate@latest init . --agent claude-code
 ```
 
-If the package has not yet been published under `designgate`, run the repository source CLI instead:
+The package is published under `designgate`; use the npm form for normal projects. For source inspection or unreleased development, clone the repository and invoke the CLI directly:
 
 ```bash
 git clone https://github.com/HosnainRafi/designgate.git
@@ -115,9 +115,9 @@ npx designgate@latest loop . --generator "npm run agent:fix" --grade --target ht
 | Surface | Purpose | Requires hosted dashboard? |
 | --- | --- | --- |
 | `verify` | Deterministic Tier A rule evidence | No |
-| `grade` | Grade an existing local three-breakpoint capture with Claude-compatible vision | No; requires `ANTHROPIC_API_KEY` |
-| `check --grade` | Render, grade, and write one combined local report | No; requires `ANTHROPIC_API_KEY` |
-| `loop --grade` | Render, grade, critique, and retry the generator until the combined gate passes or reaches its cap | No; requires `ANTHROPIC_API_KEY` |
+| `grade` | Grade an existing local three-breakpoint capture with the configured vision provider | No; requires the configured provider key |
+| `check --grade` | Render, grade, and write one combined local report | No; requires the configured provider key |
+| `loop --grade` | Render, grade, critique, and retry the generator until the combined gate passes or reaches its cap | No; requires the configured provider key |
 | `evidence` | Prepare a typed payload for optional S3-backed hosted run history | Only this persistence path uses the hosted app |
 
 The hosted dashboard is therefore an optional persistence, comparison, and team-review layer; it is not the execution path for open CLI Tier B grading.
