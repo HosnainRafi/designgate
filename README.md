@@ -49,6 +49,7 @@ npx designgate@latest loop . \
 | [AutoClaw Desktop Integration](docs/AUTOCLAW_DESKTOP.md) | Installable OpenClaw skill, `$designgate` prompts, source/npx command paths, and end-to-end website-building workflow. |
 | [Scaling Roadmap](docs/SCALING.md) | Modular CLI target, queue workers, S3, database, vision-grading, security, observability, CI, references, and licensing boundaries. |
 | [Operations and Release Guide](docs/OPERATIONS.md) | Evidence import, troubleshooting, npm publishing, GitHub operations, validation, and branch protection. |
+| [No-Cost Team Operations](docs/TEAM_OPERATIONS.md) | Workspace/project isolation, scoped roles, reviews, audit trail, manual retention, quotas, and the user-triggered execution model. |
 
 For traceable source material used by the AutoClaw integration guide, see [research notes](docs/research-sources.md).
 

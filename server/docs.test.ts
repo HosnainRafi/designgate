@@ -7,7 +7,7 @@ const read = (path: string) => readFileSync(join(root, path), "utf8");
 
 describe("DesignGate documentation and OpenClaw skill contract", () => {
   it("ships the complete documentation set linked by the README", () => {
-    const required = ["docs/GUIDE.md", "docs/AUTOCLAW_DESKTOP.md", "docs/SCALING.md", "docs/OPERATIONS.md", "docs/research-sources.md", "SKILL.md"];
+    const required = ["docs/GUIDE.md", "docs/AUTOCLAW_DESKTOP.md", "docs/SCALING.md", "docs/OPERATIONS.md", "docs/TEAM_OPERATIONS.md", "docs/research-sources.md", "SKILL.md"];
     for (const path of required) expect(existsSync(join(root, path))).toBe(true);
     const readme = read("README.md");
     for (const path of required.slice(0, -1)) expect(readme).toContain(path);
@@ -33,5 +33,11 @@ describe("DesignGate documentation and OpenClaw skill contract", () => {
     expect(autoclaw).toContain("gaming-3d");
     expect(autoclaw).toContain("designgate plan");
     expect(autoclaw).toContain("designgate@latest build");
+  });
+
+  it("documents the no-cost team operations boundary without promising an always-on worker", () => {
+    const operations = read("docs/TEAM_OPERATIONS.md");
+    for (const value of ["workspace", "owner", "reviewer", "audit", "retention", "quota", "User-triggered", "No persistent worker", "manual cleanup"]) expect(operations).toContain(value);
+    expect(read("docs/SCALING.md")).toContain("Current no-cost control plane");
   });
 });
