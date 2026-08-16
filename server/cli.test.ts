@@ -14,16 +14,16 @@ describe("installable DesignGate CLI", () => {
   it("declares a minimal publishable npm package contract", () => {
     const packageJson = JSON.parse(readFileSync(join(process.cwd(), "package.json"), "utf8"));
     expect(packageJson.bin.designgate).toBe("cli/designgate.mjs");
-    expect(packageJson.files).toEqual(expect.arrayContaining(["cli", "rules", "README.md", "LICENSE"]));
+    expect(packageJson.files).toEqual(expect.arrayContaining(["cli", "rules", "docs", "README.md", "LICENSE", "SKILL.md"]));
     expect(packageJson.publishConfig.access).toBe("public");
-    for (const file of ["README.md", "LICENSE", "cli/designgate.mjs", "rules/manifest.json"]) expect(existsSync(join(process.cwd(), file))).toBe(true);
+    for (const file of ["README.md", "LICENSE", "SKILL.md", "docs/GUIDE.md", "cli/designgate.mjs", "rules/manifest.json"]) expect(existsSync(join(process.cwd(), file))).toBe(true);
   });
 
   it("includes the expected files in the actual npm dry-run tarball", () => {
     const output = execFileSync("npm", ["pack", "--dry-run", "--json", "--ignore-scripts"], { cwd: process.cwd(), encoding: "utf8" });
     const packed = JSON.parse(output)[0];
     const files = packed.files.map((file: { path: string }) => file.path);
-    expect(files).toEqual(expect.arrayContaining(["LICENSE", "README.md", "cli/designgate.mjs", "package.json", "rules/manifest.json", "rules/designgate-modern-ui.md"]));
+    expect(files).toEqual(expect.arrayContaining(["LICENSE", "README.md", "SKILL.md", "docs/GUIDE.md", "docs/AUTOCLAW_DESKTOP.md", "docs/SCALING.md", "docs/OPERATIONS.md", "cli/designgate.mjs", "package.json", "rules/manifest.json", "rules/designgate-modern-ui.md"]));
     expect(files.some((file: string) => file.startsWith("client/") || file.startsWith("server/"))).toBe(false);
   });
 
@@ -65,6 +65,23 @@ describe("installable DesignGate CLI", () => {
     expect(report.schemaVersion).toBe("1.2.0");
     expect(report.checks.every((check: { payloadHashValid: boolean; agentOutputMatching: boolean; changedFiles: string[]; classifiedChanges: Record<string, string[]> }) => check.payloadHashValid && check.agentOutputMatching && Array.isArray(check.changedFiles) && check.classifiedChanges["styles"]?.length)).toBe(true);
     expect(report.checks.find((check: { id: string }) => check.id === "DG-MOTION-001").evidence).toContain("motion");
+  });
+
+  it("does not let Markdown documentation prose create a false color-rule failure", () => {
+    const root = mkdtempSync(join(tmpdir(), "designgate-doc-prose-")); created.push(root);
+    mkdirSync(join(root, "src/components"), { recursive: true });
+    writeFileSync(join(root, "src/components/App.css"), "font-family:Avenir;--background:#111;display:grid;gap:1rem;transition:opacity;@media (min-width:768px){}@media (prefers-reduced-motion:reduce){}focus-visible aria-label;");
+    writeFileSync(join(root, "README.md"), "Documentation may explain why a generic purple-to-pink treatment is prohibited.");
+    writeFileSync(join(root, "src/components/ColorPolicy.test.ts"), "const explanation = 'purple-to-pink is prohibited in UI output';");
+    mkdirSync(join(root, "cli"), { recursive: true });
+    writeFileSync(join(root, "cli/implementation.mjs"), "const policy = 'purple-to-pink belongs only in a documentation example';");
+    mkdirSync(join(root, "server"), { recursive: true });
+    writeFileSync(join(root, "server/rubric.ts"), "export const policy = 'purple-to-pink is forbidden by the verifier';");
+    run(["init", root]);
+    writeFileSync(join(root, ".designgate/latest-capture.json"), JSON.stringify({ engine: "playwright-chromium", captures: [] }));
+    try { run(["verify", root]); } catch { /* inspect the persisted report for the focused color-rule assertion */ }
+    const report = JSON.parse(readFileSync(join(root, ".designgate/report.json"), "utf8"));
+    expect(report.checks.find((check: { id: string; applied: boolean }) => check.id === "DG-COLOR-001").applied).toBe(true);
   });
 
   it("emits concise exact feedback in compatibility loop mode", () => {

@@ -2,13 +2,41 @@
 
 DesignGate is an **installable, agent-agnostic UI quality gate**. It gives a coding agent explicit modern-design rules, captures real browser evidence at mobile, tablet, and desktop widths, and verifies project artifacts instead of trusting an agent’s self-report.
 
+## Documentation
+
+| Guide | What it covers |
+| --- | --- |
+| [Product Guide](docs/GUIDE.md) | Architecture, Tier A/Tier B, rule contract, evidence flow, reports, bounded loops, safeguards, and older-model usage. |
+| [AutoClaw Desktop Integration](docs/AUTOCLAW_DESKTOP.md) | Installable OpenClaw skill, `$designgate` prompts, source/npx command paths, and end-to-end website-building workflow. |
+| [Scaling Roadmap](docs/SCALING.md) | Modular CLI target, queue workers, S3, database, vision-grading, security, observability, CI, references, and licensing boundaries. |
+| [Operations and Release Guide](docs/OPERATIONS.md) | Evidence import, troubleshooting, npm publishing, GitHub operations, validation, and branch protection. |
+
+For traceable source material used by the AutoClaw integration guide, see [research notes](docs/research-sources.md).
+
 ## Install into any agent project
 
 ```bash
 npx designgate@latest init . --agent claude-code
 ```
 
+If the package has not yet been published under `designgate`, run the repository source CLI instead:
+
+```bash
+git clone https://github.com/HosnainRafi/AI-fine-graded.git
+node ./AI-fine-graded/cli/designgate.mjs init . --agent claude-code
+```
+
 The initializer writes `designgate.config.json`, an auditable `.designgate/manifest.json`, every compiled adapter under `.designgate/agents/`, native agent instruction files, and `.github/workflows/designgate.yml`.
+
+## AutoClaw Desktop and OpenClaw skill
+
+The repository includes a root `SKILL.md` for OpenClaw-compatible desktop-agent workflows. After reviewing the repository, install it from Git into the active workspace:
+
+```bash
+openclaw skills install git:HosnainRafi/AI-fine-graded@main --as designgate
+```
+
+In AutoClaw, reference `$designgate` in a project-building prompt. The skill tells the agent to install or inspect `designgate.config.json`, apply the native rule contract, capture all three breakpoints, run verification, and relay failed `detail` instructions verbatim to the generator. See the complete [AutoClaw Desktop guide](docs/AUTOCLAW_DESKTOP.md) before enabling a shared/global skill.
 
 | Agent harness | Native instruction file |
 |---|---|
@@ -56,7 +84,7 @@ The repository is configured as a public package with a `bin` entrypoint and a `
 pnpm install
 pnpm test
 pnpm build
-pnpm pack --dry-run
+pnpm pack --dry-run --json --ignore-scripts
 npm login
 npm publish --access public
 ```
@@ -70,3 +98,54 @@ The generated instructions are **layered and deterministic**: inspect, apply tok
 ## Rule contract
 
 Each portable rule has a stable ID, category, required/optional status, exact instruction payload, and cryptographic payload hash. Core coverage includes typography, semantic color, layout hierarchy, motion, responsive behavior, accessibility, asset discipline, component reuse, and completion verification.
+
+## Framework presets
+
+DesignGate can install the portable core rules plus a framework-specific preset:
+
+```bash
+npx designgate@latest init . --preset react
+npx designgate@latest init . --preset nextjs
+npx designgate@latest init . --preset vue
+npx designgate@latest init . --preset component-library
+npx designgate@latest rules .
+```
+
+The selected preset is recorded in `.designgate/manifest.json`, included in native agent instruction files, and exposed by `designgate rules` for audit tooling.
+
+## Clean-project npm smoke test
+
+Before publishing a release, run the repository checks and validate the actual package contents:
+
+```bash
+pnpm check
+pnpm test
+npm pack --dry-run --json --ignore-scripts
+```
+
+Then test the command shape in an empty directory:
+
+```bash
+mkdir /tmp/designgate-clean && cd /tmp/designgate-clean
+npx designgate@latest init . --preset react
+npx designgate@latest rules .
+```
+
+Publishing requires an npm account with permission for the package name:
+
+```bash
+npm login
+npm publish --access public
+```
+
+## Branch protection
+
+The generated workflow exposes the `verify-ui` check. In GitHub, protect `main` by requiring pull requests, at least one approval, passing status checks including `verify-ui`, stale-review dismissal, conversation resolution, linear history, and blocking force pushes and branch deletion. Programmatic branch-protection changes require a token with repository administration permission; the current publishing credential can push code but returned `403 Resource not accessible by personal access token` for the protection API, so apply this policy from **Settings → Branches** or use an administrator-scoped token.
+
+For administrators who want to apply the policy by API instead of the GitHub UI:
+
+```bash
+GITHUB_TOKEN=ghp_... npm run github:protect
+```
+
+The token must have repository administration permission. The command requires the `verify-ui` check, one approving review, stale-review dismissal, conversation resolution, linear history, and blocks force pushes and deletion. Override `DESIGNGATE_GITHUB_OWNER`, `DESIGNGATE_GITHUB_REPO`, and `DESIGNGATE_GITHUB_BRANCH` for another repository.

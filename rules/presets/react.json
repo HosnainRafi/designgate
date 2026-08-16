@@ -1,0 +1,11 @@
+{
+  "id": "react",
+  "name": "React UI Quality",
+  "extends": "designgate-modern-ui",
+  "description": "Rules for React interfaces with reusable components, stable stateful interactions, and accessible UI primitives.",
+  "rules": [
+    { "id": "REACT-COMP-001", "instruction": "Keep repeated UI patterns in reusable React components with explicit props; do not duplicate large JSX blocks." },
+    { "id": "REACT-STATE-001", "instruction": "Keep loading, error, empty, and success states explicit for data-backed components; never hide async failure behind an empty state." },
+    { "id": "REACT-MOTION-001", "instruction": "Prefer transform and opacity transitions for React interaction feedback and keep effects interruptible." }
+  ]
+}

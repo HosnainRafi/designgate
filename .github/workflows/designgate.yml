@@ -1,0 +1,36 @@
+name: DesignGate quality gate
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-ui:
+    name: verify-ui
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enable pnpm
+        uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Initialize DesignGate
+        run: node cli/designgate.mjs init . --agent generic --preset component-library
+      - name: Verify application
+        run: node cli/designgate.mjs verify .
+      - name: Upload DesignGate report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: designgate-report
+          path: .designgate/
