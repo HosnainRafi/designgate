@@ -72,6 +72,11 @@ describe("installable DesignGate CLI", () => {
     mkdirSync(join(root, "src/components"), { recursive: true });
     writeFileSync(join(root, "src/components/App.css"), "font-family:Avenir;--background:#111;display:grid;gap:1rem;transition:opacity;@media (min-width:768px){}@media (prefers-reduced-motion:reduce){}focus-visible aria-label;");
     writeFileSync(join(root, "README.md"), "Documentation may explain why a generic purple-to-pink treatment is prohibited.");
+    writeFileSync(join(root, "src/components/ColorPolicy.test.ts"), "const explanation = 'purple-to-pink is prohibited in UI output';");
+    mkdirSync(join(root, "cli"), { recursive: true });
+    writeFileSync(join(root, "cli/implementation.mjs"), "const policy = 'purple-to-pink belongs only in a documentation example';");
+    mkdirSync(join(root, "server"), { recursive: true });
+    writeFileSync(join(root, "server/rubric.ts"), "export const policy = 'purple-to-pink is forbidden by the verifier';");
     run(["init", root]);
     writeFileSync(join(root, ".designgate/latest-capture.json"), JSON.stringify({ engine: "playwright-chromium", captures: [] }));
     try { run(["verify", root]); } catch { /* inspect the persisted report for the focused color-rule assertion */ }
