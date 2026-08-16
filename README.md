@@ -112,6 +112,16 @@ npx designgate@latest loop . --generator "npm run agent:fix" --grade --target ht
 
 `verify` creates a deterministic Tier A `.designgate/report.json`. `check --grade` and `loop --grade` create a combined report with per-rule payload hashes, Phase-0 project context, mobile/tablet/desktop captures, Tier B dimension scores, exact visual critique, classified changed files, adapter-manifest matching, and exact generator feedback. The bounded loop stops only when the required Tier A checks and Tier B thresholds pass, or when it reaches the configured iteration cap.
 
+| Surface | Purpose | Requires hosted dashboard? |
+| --- | --- | --- |
+| `verify` | Deterministic Tier A rule evidence | No |
+| `grade` | Grade an existing local three-breakpoint capture with Claude-compatible vision | No; requires `ANTHROPIC_API_KEY` |
+| `check --grade` | Render, grade, and write one combined local report | No; requires `ANTHROPIC_API_KEY` |
+| `loop --grade` | Render, grade, critique, and retry the generator until the combined gate passes or reaches its cap | No; requires `ANTHROPIC_API_KEY` |
+| `evidence` | Prepare a typed payload for optional S3-backed hosted run history | Only this persistence path uses the hosted app |
+
+The hosted dashboard is therefore an optional persistence, comparison, and team-review layer; it is not the execution path for open CLI Tier B grading.
+
 ## GitHub pull-request gate
 
 `init` creates a GitHub Actions workflow that installs Chromium, initializes DesignGate, optionally renders the URL held in the repository variable `DESIGNGATE_TARGET`, verifies the quality contract, and uploads the report as a workflow artifact. Set `DESIGNGATE_TARGET` to a preview URL reachable from GitHub Actions; otherwise the workflow still performs static rule verification.
