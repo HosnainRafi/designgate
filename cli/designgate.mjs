@@ -10,7 +10,14 @@ import { openAICompatibleProvider } from "../grader/providers/openai-compatible.
 
 const here = resolve(new URL("..", import.meta.url).pathname);
 const manifest = JSON.parse(readFileSync(join(here, "rules/manifest.json"), "utf8"));
-const skill = readFileSync(join(here, "rules/designgate-modern-ui.md"), "utf8");
+const prescriptiveRules = [
+  "rules/designgate-world-class-typography.md",
+  "rules/designgate-world-class-color.md",
+  "rules/designgate-world-class-imagery.md",
+  "rules/designgate-motion-bible.md",
+];
+const skill = [readFileSync(join(here, "rules/designgate-modern-ui.md"), "utf8")]
+  .concat(prescriptiveRules.map((f) => readFileSync(join(here, f), "utf8"))).join("\n\n---\n\n");
 const adapters = ["generic", "claude-code", "cursor", "codex-cli", "gemini-cli", "copilot"];
 const nativeFiles = { "claude-code": "CLAUDE.md", cursor: ".cursor/rules/designgate.mdc", "codex-cli": "AGENTS.md", "gemini-cli": "GEMINI.md", copilot: ".github/copilot-instructions.md", generic: "DESIGNGATE.md" };
 const viewports = [{ name: "mobile", width: 390, height: 844 }, { name: "tablet", width: 834, height: 1112 }, { name: "desktop", width: 1440, height: 1000 }];
@@ -131,7 +138,7 @@ async function main() {
   if (command === "rules") {
     const installedPath = join(root, ".designgate", "manifest.json");
     const installed = existsSync(installedPath) ? JSON.parse(readFileSync(installedPath, "utf8")) : null;
-    return console.log(JSON.stringify({ installed: Boolean(installed), ruleSet: manifest.ruleSet, version: manifest.version, availablePresets: presetNames, selectedPreset: installed?.preset ?? "base", presetRules: installed?.presetRules ?? [], rules: manifest.rules }, null, 2));
+    return console.log(JSON.stringify({ installed: Boolean(installed), ruleSet: manifest.ruleSet, version: manifest.version, availablePresets: presetNames, selectedPreset: installed?.preset ?? "base", presetRules: installed?.presetRules ?? [], prescriptiveRuleFiles: prescriptiveRules, rules: manifest.rules }, null, 2));
   }
   if (command === "render") return console.log(JSON.stringify(await render(raw, resolve(parseFlag(rest, "--project", process.cwd()))), null, 2));
   if (command === "evidence") return console.log(JSON.stringify(buildEvidencePayload(root, Number(parseFlag(rest, "--run-id", "0")), Number(parseFlag(rest, "--iteration", "0"))), null, 2));
