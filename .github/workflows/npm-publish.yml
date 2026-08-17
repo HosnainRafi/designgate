@@ -10,6 +10,9 @@ permissions:
   contents: write
   pull-requests: write
 
+env:
+  GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
+
 jobs:
   # --- Stage 1: bump the version and open a PR (triggered by merges to main) ---
   bump:
@@ -70,7 +73,7 @@ jobs:
       - name: Open release PR with auto-merge
         if: steps.check.outputs.skip != 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PUSH_TOKEN }}
         run: |
           NEW="${{ steps.bump.outputs.version }}"
           PR=$(gh pr create \
