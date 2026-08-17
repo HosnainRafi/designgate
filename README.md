@@ -202,6 +202,19 @@ GITHUB_TOKEN=ghp_... npm run github:protect
 The token must have repository administration permission. The command requires the `verify-ui` check, one approving review, stale-review dismissal, conversation resolution, linear history, and blocks force pushes and deletion. Override `DESIGNGATE_GITHUB_OWNER`, `DESIGNGATE_GITHUB_REPO`, and `DESIGNGATE_GITHUB_BRANCH` for another repository.
 
 
+## World-class design contracts (prescriptive, not avoidance)
+
+DesignGate replaces vague avoidance guidance with four **exact, prescriptive contracts** embedded into every installed agent instruction. Each project must declare its choices from the approved sets, so an AI following DesignGate builds with the same discipline as a top-tier studio:
+
+| Contract | File | What it mandates |
+| --- | --- | --- |
+| Typography | `rules/designgate-world-class-typography.md` | One of four proven type systems (Editorial Luxury, Swiss Precision, Warm Humanist, Tech Brutalist) with exact fonts, scale ratios, and hierarchy rules |
+| Color & Material | `rules/designgate-world-class-color.md` | One of four approved palettes (Ink & Ivory, Midnight Electric, Clay & Sand, Monochrome Signal) plus a material direction (Paper, Glass, Ink Void, Grid), with contrast floors and accent-ratio limits |
+| Imagery & Art-Direction | `rules/designgate-world-class-imagery.md` | One of four image directions (Rendered Abstraction, Treated Editorial, Spatial Product, Generative) with palette lock, spec discipline, and generation prompt patterns |
+| Motion Bible | `rules/designgate-motion-bible.md` | The complete 2025–2026 motion catalog (24 techniques, surface states, hero patterns) with non-negotiable easing physics, duration bands, and a 60fps budget |
+
+No site is considered complete until it states its chosen type system, palette, image direction, and motion techniques in the build report.
+
 ## 3D designs and Goal Mode
 
 DesignGate supports an additive `immersive3d` extension for browser-rendered 3D interfaces. Activate it with the `gaming-3d` preset:

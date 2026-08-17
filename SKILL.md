@@ -25,7 +25,7 @@ Use this skill when a user asks to create, redesign, inspect, verify, or improve
    node /path/to/designgate/cli/designgate.mjs init . --agent generic --preset base
    ```
 
-3. Read `designgate.config.json`, `.designgate/project-context.json`, and the native instruction file written for the coding agent. Reuse detected tokens and components while building or modifying the interface.
+3. Read `designgate.config.json`, `.designgate/project-context.json`, and the native instruction file written for the coding agent. The instruction file embeds four prescriptive contracts — world-class typography (exact font systems), world-class color & material (approved palettes), world-class imagery & art-direction, and the motion bible — which the design MUST follow in full. Reuse detected tokens and components while building or modifying the interface.
 4. Start the project’s preview server using its documented command. Capture all three required breakpoints from a reachable target URL:
 
    ```bash
