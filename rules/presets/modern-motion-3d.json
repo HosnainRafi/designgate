@@ -1,0 +1,15 @@
+{
+  "id": "modern-motion-3d",
+  "name": "Modern Motion & 3D",
+  "extends": "designgate-modern-ui",
+  "description": "Rules for premium modern websites with award-site motion choreography, scroll-driven storytelling, ambient 3D/shader surfaces, and 21st.dev-grade component craft.",
+  "rules": [
+    { "id": "MM-HERO-001", "instruction": "Build the hero as an animated centerpiece: a scroll-tied or ambient background layer (shaders, aurora, particle, or WebGL surface) behind the headline, plus an entrance choreography where the headline, subline, and CTA land in sequence, not all at once." },
+    { "id": "MM-SCROLL-001", "instruction": "Use scroll-driven motion on at least two sections: text reveals, image parallax, pinned scroll choreography, horizontal scroll, or number tickers. Every scroll effect must scrub with the scroll position and never jump or clip." },
+    { "id": "MM-MOTION-001", "instruction": "Pick exactly one motion engine for the project (GSAP, Framer Motion/motion.dev, or Motion One) and use it consistently; animate transform, opacity, and filter only, keep interactions under 500ms, and provide a prefers-reduced-motion path that degrades to the static state." },
+    { "id": "MM-DEPTH-001", "instruction": "Create depth without faking it: layered parallax, 3D perspective transforms, tilt-on-hover cards, or a real canvas/WebGL surface. The depth cue must be visible in rendered evidence at all three breakpoints." },
+    { "id": "MM-GLOW-001", "instruction": "Use light-and-glow as an accent language rather than flat fills: radial gradients, glow borders, spotlight or mouse-follow effects, and one restrained emissive accent color. Glow must serve hierarchy, not wallpaper." },
+    { "id": "MM-COMP-001", "instruction": "Build 21st.dev-grade craft into at least five interactive surfaces: animated hero, tilt or 3D cards, bento grid, dock or morphing navigation, number ticker, marquee, text reveal, cursor effect, or shimmer buttons. Each must have a real hover/pointer state, not a static card." },
+    { "id": "MM-PERF-001", "instruction": "Hold 60fps scroll motion: no scroll listeners on the main thread for painting (use transform/opacity, requestAnimationFrame, or the motion library), no layout thrashing, LCP under 2.5s, and reduced-motion users receive the static composition instantly." }
+  ]
+}

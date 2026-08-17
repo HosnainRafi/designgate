@@ -204,6 +204,8 @@ npx designgate@latest init . --agent cursor --preset react
 npx designgate@latest init . --agent generic --preset nextjs
 npx designgate@latest init . --agent generic --preset vue
 npx designgate@latest init . --agent generic --preset component-library
+npx designgate@latest init . --agent generic --preset modern-motion
+npx designgate@latest init . --agent generic --preset modern-motion-3d
 npx designgate@latest rules .
 ```
 
@@ -382,3 +384,19 @@ npx designgate@latest build "Build a multiplayer 3D game with a cinematic lobby"
 `plan` writes `.designgate/goal-brief.json` with the selected category, maintained stack, sections, mood keywords, required capabilities, enabled extensions, and generator prompt text. `build` passes the brief and Phase-0 context to the existing generator, renderer, verifier, inline Tier B grader, and bounded retry loop. Goal text is preserved verbatim in generator feedback. The category table is maintained in `config/goal-categories.json`; the extension contract is maintained in `rules/extensions/immersive3d.json`.
 
 > **Opt-in and backward compatibility:** projects without Goal Mode or `immersive3d` configuration continue to use the existing `init`, `render`, `verify`, `check`, `grade`, and `loop` behavior unchanged.
+
+### Modern motion extension
+
+DesignGate’s modern motion support is a second **additive, opt-in extension**. Activate it with `--preset modern-motion` or `--preset modern-motion-3d`, or with `extensions.modern-motion.enabled: true`. The extension manifest in `rules/extensions/modern-motion.json` adds these deterministic rule IDs:
+
+| Rule ID | Verifier |
+| --- | --- |
+| `DG-MOTION-EXT-001` | Motion library import in sources (GSAP, Framer Motion/motion.dev, or Motion One) |
+| `DG-MOTION-EXT-002` | Visible choreography evidence: animation APIs, ScrollTrigger, scroll effects, stagger |
+| `DG-MOTION-EXT-003` | `prefers-reduced-motion` fallback stylesheet or media query |
+| `DG-MOTION-EXT-004` | Interactive states transition instead of snapping |
+| `DG-MOTION-EXT-005` | Scroll choreography without horizontal overflow or broken mobile scrolling |
+
+When the extension is active, `verify` and `grade` add a sixth Tier B dimension, `motionCraft` (weight 0.2, matching the pattern used by the `immersiveness` dimension), scored for sequenced entrances, easing personality, scroll-driven effects that enhance content, 60fps feel, and the absence of jank or over-animation. The companion preset rules (the `MM-*` IDs in `rules/presets/modern-motion.json` and `rules/presets/modern-motion-3d.json`) carry the positive direction: animated hero centerpiece, scroll storytelling on two or more sections, glow and depth language, 21st.dev-grade interactive surfaces, and single-engine motion discipline.
+
+> **Opt-in and backward compatibility:** projects without the `modern-motion` extension or preset configuration continue to use the standard rule set and five Tier B dimensions unchanged. Legacy `immersive3d` runs remain unaffected.

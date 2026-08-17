@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.1.0",
   "ruleSet": "designgate-modern-ui",
-  "version": "2026.08.16",
+  "version": "2026.08.17",
   "description": "Portable rules for premium modern web UI, motion, responsive behavior, accessibility, and anti-generic design.",
   "rules": [
     {
@@ -84,6 +84,33 @@
         "instruction": "Before claiming completion, provide the changed files, applied rule IDs, rendered breakpoint evidence, and unresolved issues."
       },
       "hash": "sha256:90bb8b3be63c97faa29bc8ef6a0601ed5a38bf324b7950455b8e86d4c17ebdcc"
+    },
+    {
+      "id": "DG-MOTION-002",
+      "category": "motion",
+      "required": false,
+      "payload": {
+        "instruction": "Use a deliberate motion choreography: sequenced entrances, scroll-driven reveals or parallax, and easing with personality; prefer one motion library (GSAP, Framer Motion/motion.dev, or Motion One) and keep every animation under 500ms with a prefers-reduced-motion path."
+      },
+      "hash": "sha256:c320bd738dd5488ca47daff19d2036a0842a59fa9f799a8afdeda72bf54bb040"
+    },
+    {
+      "id": "DG-DEPTH-002",
+      "category": "layout",
+      "required": false,
+      "payload": {
+        "instruction": "Add perceived depth to the page through layered parallax, perspective or tilt transforms, glow and spotlight effects, or a real canvas/WebGL surface, so the design never reads as a flat static template."
+      },
+      "hash": "sha256:57612c7cd7dfd6f4643b7dcdfd0e21dacdc0f3f623d0fc1ee857d416d905ad4f"
+    },
+    {
+      "id": "DG-COMP-002",
+      "category": "components",
+      "required": false,
+      "payload": {
+        "instruction": "Give at least five interactive surfaces engineered pointer states in the style of 21st.dev components: tilt or 3D cards, shimmer buttons, dock or morphing navigation, marquees, number tickers, bento grids, text reveals, or cursor effects."
+      },
+      "hash": "sha256:534c5b6ad333270111b6eeb366af89bd44031e8bec2dfbe92e2fbe6b49e6519b"
     }
   ]
 }

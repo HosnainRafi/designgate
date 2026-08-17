@@ -213,3 +213,20 @@ npx designgate@latest build "Build a multiplayer 3D game with a cinematic lobby"
 ```
 
 The supported Goal Mode categories are `gaming`, `portfolio`, and `ecommerce`; unknown categories fail explicitly. Immersive runs add deterministic canvas/WebGL, dependency, depth, interaction, and performance evidence and conditionally add the Tier B `immersiveness` dimension. Projects that do not enable `immersive3d` or Goal Mode retain the legacy behavior. See [`docs/GUIDE.md`](docs/GUIDE.md) for the complete contract.
+
+## Modern motion and 21st.dev-grade component craft
+
+For premium modern websites — award-site scroll choreography, animated heroes, parallax, tilt cards, glow depth, shimmer buttons, bento grids, marquees, number tickers, and other effects popularized by the 21st.dev component registry — DesignGate ships two additive presets. Both register the `modern-motion` extension, which contributes five Tier A checks and a sixth Tier B dimension, `motionCraft`, weighted at 20% of the vision grade:
+
+```bash
+npx designgate@latest init . --agent claude-code --preset modern-motion
+npx designgate@latest plan "Build a marketing site with an animated hero and scroll storytelling" --project .
+npx designgate@latest build "Build a marketing site with an animated hero and scroll storytelling" --generator "npm run agent:generate" --project . --target http://localhost:3000 --grade
+```
+
+| Preset | Activates | Use when |
+| --- | --- | --- |
+| `modern-motion` | Motion choreography, glow depth, interactive pointer states | Premium motion without real-time 3D (marketing sites, portfolios, product launches) |
+| `modern-motion-3d` | All of the above, plus WebGL/3D surface rules | Ambient 3D or Three.js scenes layered with scroll choreography |
+
+The extension verifies a real motion library import (GSAP, Framer Motion/motion.dev, or Motion One), visible choreography evidence, a `prefers-reduced-motion` fallback, animated pointer states, and scroll-safe mobile behavior. The Tier B `motionCraft` score judges sequencing, easing personality, scroll-driven effects that enhance content, and the absence of jank or over-animation. The supported Goal Mode categories are `gaming`, `portfolio`, and `ecommerce`; unknown categories fail explicitly. Projects that do not enable any extension retain the legacy behavior. See [`docs/GUIDE.md`](docs/GUIDE.md) for the complete contract.
