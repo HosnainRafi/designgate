@@ -1,0 +1,14 @@
+{
+  "id": "modern-motion",
+  "name": "Modern Motion",
+  "extends": "designgate-modern-ui",
+  "description": "Rules for award-site motion without real-time 3D: scroll choreography, animated heroes, glow depth, and 21st.dev-grade component craft.",
+  "extensions": ["modern-motion"],
+  "rules": [
+    { "id": "MM-WEB-001", "instruction": "Build the hero as an animated centerpiece with a sequenced entrance: headline, subline, and CTA land in order with eased stagger, backed by an ambient background layer." },
+    { "id": "MM-WEB-002", "instruction": "Use scroll-driven motion on at least two sections (text reveals, parallax, pinned choreography, horizontal scroll, or tickers); every scroll effect must scrub smoothly with the scroll position." },
+    { "id": "MM-WEB-003", "instruction": "Use exactly one motion engine (GSAP, Framer Motion/motion.dev, or Motion One) consistently across the project and provide a prefers-reduced-motion fallback." },
+    { "id": "MM-WEB-004", "instruction": "Create perceived depth through layered parallax, perspective transforms, tilt-on-hover cards, or glow effects; never fake depth with a static image where interaction is promised." },
+    { "id": "MM-WEB-005", "instruction": "Give at least five interactive surfaces real pointer states: tilt cards, shimmer buttons, dock navigation, marquees, text reveals, number tickers, or spotlight effects." }
+  ]
+}
