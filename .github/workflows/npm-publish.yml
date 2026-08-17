@@ -76,11 +76,16 @@ jobs:
           GH_TOKEN: ${{ secrets.PUSH_TOKEN }}
         run: |
           NEW="${{ steps.bump.outputs.version }}"
-          PR=$(gh pr create \
-            --base main \
-            --head "release/bump-${NEW}" \
-            --title "chore(release): npm ${NEW}" \
-            --body "Automated version bump. Merges when \`verify-ui\` passes, then the publish job releases to npm.") || true
+          PR=$(gh pr list --repo "${GITHUB_REPOSITORY}" --head "release/bump-${NEW}" --state open --json number -q '.[0].number')
+          if [ -z "${PR}" ]; then
+            PR=$(gh pr create \
+              --repo "${GITHUB_REPOSITORY}" \
+              --base main \
+              --head "release/bump-${NEW}" \
+              --title "chore(release): npm ${NEW}" \
+              --body "Automated version bump. Merges when \`verify-ui\` passes, then the publish job releases to npm.")
+          fi
+          gh pr edit "${PR}" --add-label auto-release || true
           gh pr merge "${PR}" --squash --auto
 
   # --- Stage 2: publish to npm after the bump PR merges (triggered by PR close) ---
