@@ -1,20 +1,40 @@
 import { describe, expect, it } from "vitest";
 
 /** Retry wrapper: GitHub's API occasionally returns 5xx during partial
- *  outages; the publishing contract only requires eventual authentication. */
+ *  outages; the publishing contract only requires eventual authentication.
+ *
+ *  Fetches use an AbortController timeout and exponential backoff so that
+ *  transient network failures or GitHub API degradation don't fail CI. */
+
+function fetchWithTimeout(
+  url: string,
+  init: RequestInit,
+  timeoutMs = 10_000,
+): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  return fetch(url, { ...init, signal: controller.signal }).finally(() =>
+    clearTimeout(timer),
+  );
+}
+
 async function fetchWithRetry(
   url: string,
   init: RequestInit,
-  retries = 5,
+  retries = 10,
 ): Promise<Response> {
   let last: Response | undefined;
   for (let attempt = 0; attempt <= retries; attempt += 1) {
-    const response = await fetch(url, init);
-    if (response.status < 500) {
-      return response;
+    try {
+      const response = await fetchWithTimeout(url, init);
+      if (response.status < 500) {
+        return response;
+      }
+      last = response;
+    } catch {
+      last = undefined;
     }
-    last = response;
-    await new Promise((resolve) => setTimeout(resolve, 5_000 * (attempt + 1)));
+    await new Promise((resolve) => setTimeout(resolve, 2_000 * (attempt + 1)));
   }
   return last as Response;
 }
@@ -37,7 +57,7 @@ describe("GitHub publishing credential", () => {
       const user = await response.json() as { login?: string; email?: string | null };
       expect(user.login).toBeTruthy();
     },
-    60_000,
+    180_000,
   );
 
   it.skipIf(!process.env.GITHUB_TOKEN)(
@@ -50,6 +70,6 @@ describe("GitHub publishing credential", () => {
       );
       expect([200, 404]).toContain(response.status);
     },
-    60_000,
+      180_000,
   );
 });
