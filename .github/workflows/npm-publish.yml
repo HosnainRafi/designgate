@@ -3,13 +3,17 @@ name: Auto-publish to npm
 on:
   push:
     branches: [main]
+  pull_request:
+    types: [closed]
 
 permissions:
   contents: write
-  id-token: write
+  pull-requests: write
 
 jobs:
-  publish:
+  # --- Stage 1: bump the version and open a PR (triggered by merges to main) ---
+  bump:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !startsWith(github.event.head_commit.message, 'chore(release)')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -24,7 +28,6 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-          registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -43,12 +46,12 @@ jobs:
           EXISTS=$(npm view designgate@${CURRENT} version 2>/dev/null || true)
           if [ "$EXISTS" = "$CURRENT" ]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo "Already published: ${CURRENT}, skipping release job."
+            echo "Already published: ${CURRENT}, skipping bump."
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Bump patch version and tag
+      - name: Bump patch version, commit, and tag
         if: steps.check.outputs.skip != 'true'
         id: bump
         run: |
@@ -57,18 +60,69 @@ jobs:
           node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json'));p.version='${NEW}';fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n');"
           git config user.name "designgate-bot"
           git config user.email "82991389+HosnainRafi@users.noreply.github.com"
+          git checkout -b "release/bump-${NEW}"
           git add package.json
           git commit -m "chore(release): npm ${NEW}"
           git tag "v${NEW}"
+          git push origin "release/bump-${NEW}" --follow-tags
           echo "version=${NEW}" >> "$GITHUB_OUTPUT"
-          echo "tag=v${NEW}" >> "$GITHUB_OUTPUT"
 
-      - name: Push version bump and tag
+      - name: Open release PR with auto-merge
+        if: steps.check.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          NEW="${{ steps.bump.outputs.version }}"
+          PR=$(gh pr create \
+            --base main \
+            --head "release/bump-${NEW}" \
+            --title "chore(release): npm ${NEW}" \
+            --body "Automated version bump. Merges when \`verify-ui\` passes, then the publish job releases to npm.") || true
+          gh pr merge "${PR}" --squash --auto
+
+  # --- Stage 2: publish to npm after the bump PR merges (triggered by PR close) ---
+  publish:
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'auto-release')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+
+      - name: Enable pnpm
+        uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check whether this version already exists on npm
+        id: check
+        run: |
+          CURRENT=$(node -p "require('./package.json').version")
+          EXISTS=$(npm view designgate@${CURRENT} version 2>/dev/null || true)
+          if [ "$EXISTS" = "$CURRENT" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Already published: ${CURRENT}, skipping release."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "version=${CURRENT}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate the tree
         if: steps.check.outputs.skip != 'true'
         run: |
-          git push "https://x-access-token:${PUSH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "${GITHUB_REF}:refs/heads/main" --follow-tags
-        env:
-          PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
+          pnpm check
+          pnpm test
+          pnpm pack --json > /tmp/pack.json
+          node -e "const fs=require('fs');const raw=fs.readFileSync('/tmp/pack.json','utf8');const d=JSON.parse(raw.slice(raw.indexOf('{')));const pkg=Array.isArray(d)?d[0]:d;console.log('Pack OK:',pkg.filename);if(!pkg.files.some(f=>f.path.includes('designgate-award-typography-2026'))){console.error('Award typography contract missing from pack');process.exit(1);}if(!pkg.files.some(f=>f.path.includes('award-winners-2025-2026'))){console.error('Award winners study reference missing from pack');process.exit(1);}if(!pkg.files.some(f=>f.path.includes('award-craft-2026'))){console.error('Award-craft extension missing from pack');process.exit(1);}console.log('All award-grade contracts bundled.');"
 
       - name: Publish to npm
         if: steps.check.outputs.skip != 'true'
@@ -76,14 +130,18 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Push release tag
+        if: steps.check.outputs.skip != 'true'
+        run: git push origin "v${{ steps.check.outputs.version }}"
+
       - name: Create GitHub release
         if: steps.check.outputs.skip != 'true'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ steps.bump.outputs.version }}
-          release_name: v${{ steps.bump.outputs.version }}
+          tag_name: v${{ steps.check.outputs.version }}
+          release_name: v${{ steps.check.outputs.version }}
           body: |
             Automated release synced with `main`.
 
