@@ -1,8 +1,8 @@
 {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "1.2.0",
   "ruleSet": "designgate-modern-ui",
   "version": "2026.08.17",
-  "description": "Portable rules for premium modern web UI, motion, responsive behavior, accessibility, and anti-generic design.",
+  "description": "Portable rules for premium modern web UI, motion, responsive behavior, accessibility, anti-generic design, and award-circuit craft grounded in the verified 2025–2026 award record.",
   "rules": [
     {
       "id": "DG-TYPO-001",
@@ -111,6 +111,24 @@
         "instruction": "Give at least five interactive surfaces engineered pointer states in the style of 21st.dev components: tilt or 3D cards, shimmer buttons, dock or morphing navigation, marquees, number tickers, bento grids, text reveals, or cursor effects."
       },
       "hash": "sha256:534c5b6ad333270111b6eeb366af89bd44031e8bec2dfbe92e2fbe6b49e6519b"
+    },
+    {
+      "id": "DG-TYPO-002",
+      "category": "typography",
+      "required": true,
+      "payload": {
+        "instruction": "Follow the DesignGate Award Typography Contract 2026 (rules/designgate-award-typography-2026.md): declare one of Systems A–E, prefer variable fonts loaded with preload and display=swap, maintain the eyebrow/display/body three-level hierarchy in every section, and include at least one 2026 flavor device (tight-display headline, italic-serif accent word, oversized section numeral, or marquee/looping text)."
+      },
+      "hash": "sha256:9dbbde836dd6fd280b4c1e5b4b753f8b473be7873bd479e3abb156fd65a85f58"
+    },
+    {
+      "id": "DG-STUDY-001",
+      "category": "reference",
+      "required": false,
+      "payload": {
+        "instruction": "Before declaring a design direction on premium builds, study at least three entries from docs/award-winners-2025-2026.md (the verified 2025–2026 award record incl. Awwwards SOTY 2025 Lando Norris) and reference them in the build report; copy layouts from the study, not the taste — the static frame, transition craft, and 60fps discipline are what transfer."
+      },
+      "hash": "sha256:e4b0dea7fa7e66d65ecb1e41a81e5bac90181ce0c48e40a058ff831734260375"
     }
   ]
 }

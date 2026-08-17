@@ -1,0 +1,50 @@
+{
+  "id": "award-craft-2026",
+  "name": "Award-Craft 2026",
+  "version": "1.0.0",
+  "description": "Additive deterministic checks that lift a DesignGate build toward Awwwards Site-of-the-Year-grade craft, based on the verified 2025–2026 award record (Lando Norris SOTY 2025, Immersive Garden Agency of the Year 2026, Messenger Developer Site of the Year 2026) and jury-level scoring analysis.",
+  "ruleExtensions": [
+    {
+      "id": "DG-AWARD-EXT-001",
+      "category": "awardCraft",
+      "required": true,
+      "instruction": "The build must declare a single design point of view in one sentence (the 'art-direction statement') at the top of the build report, and every type choice, color choice, and layout decision must be traceable to that statement; a page that reads as a decorated template fails this check."
+    },
+    {
+      "id": "DG-AWARD-EXT-002",
+      "category": "awardCraft",
+      "required": true,
+      "instruction": "Before delivery, pass the jury checklist from docs/award-winners-2025-2026.md Section 3: static hero frame must read strong without motion, the page must hold approximately 60fps under CPU 4x throttle simulation reasoning, transitions between states must be continuous rather than hard cuts, and a graceful prefers-reduced-motion fallback must exist and be verified."
+    },
+    {
+      "id": "DG-AWARD-EXT-003",
+      "category": "awardCraft",
+      "required": true,
+      "instruction": "Typography must follow the DesignGate Award Typography Contract 2026 (rules/designgate-award-typography-2026.md): one of Systems A–E declared, variable-first font loading with preload and display=swap, the three-level eyebrow/display/body hierarchy in every section, and at least one 2026 flavor device (tight-display headline, italic-serif accent word, oversized numeral, or marquee/looping text)."
+    },
+    {
+      "id": "DG-AWARD-EXT-004",
+      "category": "awardCraft",
+      "required": false,
+      "instruction": "Include at least one kinetic-type moment where the letterforms themselves perform (split-text/word reveal on scroll, letter-spacing breathe, text scramble on hover, or a marquee), in the manner of GSAP Site-of-the-Year-nominated sites; decorative-only motion does not satisfy this check."
+    },
+    {
+      "id": "DG-AWARD-EXT-005",
+      "category": "awardCraft",
+      "required": true,
+      "instruction": "Performance hygiene must be evidenced: images lazy-loaded with LQIP or blur placeholders, fonts preloaded with only the used weight range fetched, WebGL/canvas paused offscreen via IntersectionObserver, and no layout-triggering animation on scroll; heavy pages must justify their weight in the build report."
+    },
+    {
+      "id": "DG-AWARD-EXT-006",
+      "category": "awardCraft",
+      "required": false,
+      "instruction": "The build must include at least one engineered interactive surface from the premium-stack catalog (tilt/3D card, shimmer button, dock navigation, marquee, number ticker, bento grid, or text reveal) implemented with the motion-physics rules from the DesignGate Motion Bible, and at least three pointer states per interactive surface."
+    }
+  ],
+  "tierB": {
+    "name": "awardRead",
+    "weight": 0.25,
+    "condition": "only scored when the award-craft-2026 extension is enabled",
+    "instruction": "Score whether the build reads as award-circuit craft: a coherent single art-direction point of view, typographic leadership where letterforms are the hero, choreographed motion that carries meaning rather than decoration, 60fps performance discipline, and reduced-motion grace. Dock points for template feel, bolted-on animation, jank, or any missing jury-checklist item."
+  }
+}

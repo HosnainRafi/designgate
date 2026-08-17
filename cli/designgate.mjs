@@ -12,6 +12,7 @@ const here = resolve(new URL("..", import.meta.url).pathname);
 const manifest = JSON.parse(readFileSync(join(here, "rules/manifest.json"), "utf8"));
 const prescriptiveRules = [
   "rules/designgate-world-class-typography.md",
+  "rules/designgate-award-typography-2026.md",
   "rules/designgate-world-class-color.md",
   "rules/designgate-world-class-imagery.md",
   "rules/designgate-motion-bible.md",
