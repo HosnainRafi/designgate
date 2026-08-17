@@ -34,4 +34,5 @@ describe("DesignGate documentation and OpenClaw skill contract", () => {
     expect(autoclaw).toContain("designgate plan");
     expect(autoclaw).toContain("designgate@latest build");
   });
+
 });

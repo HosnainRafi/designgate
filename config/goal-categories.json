@@ -11,14 +11,14 @@
         "state": "Zustand"
       },
       "requiredCapabilities": ["3d", "highMotion"],
-      "ruleExtensions": ["immersive3d"],
+      "ruleExtensions": ["immersive3d", "modern-motion"],
       "sections": [
         { "name": "Hero", "notes": "3D interactive centerpiece, bold display type, and one primary CTA." },
         { "name": "Featured Games", "notes": "Card grid with hover-triggered depth or tilt rather than flat static cards." },
-        { "name": "Community/Leaderboard", "notes": "Real-time-feeling data display with motion on value changes." },
+        { "name": "Community/Leaderboard", "notes": "Real-time-feeling data display with motion on value changes, such as animated number tickers." },
         { "name": "Footer", "notes": "Keep the footer standard and reserve the 3D budget for the hero." }
       ],
-      "moodKeywords": ["neon", "high-contrast", "energetic", "premium esports aesthetic — not clipart gamer style"]
+      "moodKeywords": ["neon", "high-contrast", "energetic", "premium esports aesthetic — not clipart gamer style", "award-site scroll choreography", "glow depth"]
     },
     "portfolio": {
       "signals": ["portfolio", "personal site", "showcase"],
@@ -30,13 +30,13 @@
         "state": "none needed"
       },
       "requiredCapabilities": ["highMotion"],
-      "ruleExtensions": [],
+      "ruleExtensions": ["modern-motion"],
       "sections": [
-        { "name": "Hero", "notes": "Distinctive identity, concise positioning, and one clear contact or work CTA." },
-        { "name": "Selected Work", "notes": "Projects should lead with outcome and craft, not a generic card wall." },
+        { "name": "Hero", "notes": "Distinctive identity, concise positioning, one clear contact or work CTA, and a choreographed entrance with an ambient background layer." },
+        { "name": "Selected Work", "notes": "Projects should lead with outcome and craft, not a generic card wall; use scroll-driven reveals and depth on project tiles." },
         { "name": "About", "notes": "Use a compact narrative that reinforces the designer or maker’s point of view." }
       ],
-      "moodKeywords": ["authored", "editorial", "expressive", "craft-led"]
+      "moodKeywords": ["authored", "editorial", "expressive", "craft-led", "choreographed motion", "premium 21st.dev-grade component craft"]
     },
     "ecommerce": {
       "signals": ["store", "shop", "ecommerce", "products"],

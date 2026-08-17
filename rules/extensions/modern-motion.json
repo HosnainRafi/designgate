@@ -1,0 +1,44 @@
+{
+  "id": "modern-motion",
+  "name": "Modern Motion Craft",
+  "version": "1.0.0",
+  "description": "Additive deterministic checks for award-site motion choreography: scroll-driven effects, animated heroes, and motion-library evidence.",
+  "ruleExtensions": [
+    {
+      "id": "DG-MOTION-EXT-001",
+      "category": "modernMotion",
+      "required": true,
+      "instruction": "The project must import a supported motion library (gsap, framer-motion, motion, motion-dom, or motion/react) and use it in at least one component; plain CSS transitions alone are insufficient for this extension."
+    },
+    {
+      "id": "DG-MOTION-EXT-002",
+      "category": "modernMotion",
+      "required": true,
+      "instruction": "The rendered page must show animated-hero, scroll-reveal, parallax, marquee, number-ticker, tilt, or glow effects visible at desktop width; the capture evidence must differ from a fully static page."
+    },
+    {
+      "id": "DG-MOTION-EXT-003",
+      "category": "modernMotion",
+      "required": true,
+      "instruction": "A prefers-reduced-motion stylesheet or media query must exist so that all choreography degrades to the static composition without motion artifacts."
+    },
+    {
+      "id": "DG-MOTION-EXT-004",
+      "category": "modernMotion",
+      "required": true,
+      "instruction": "Interactive states must animate: every card, button, and link that changes on hover or pointer must transition rather than snap, with duration between 100ms and 500ms."
+    },
+    {
+      "id": "DG-MOTION-EXT-005",
+      "category": "modernMotion",
+      "required": true,
+      "instruction": "Scroll choreography must not break mobile: no horizontal overflow, no content hidden under unpinned sections, and touch scrolling must remain smooth at the mobile breakpoint."
+    }
+  ],
+  "tierB": {
+    "name": "motionCraft",
+    "weight": 0.2,
+    "condition": "only scored when the modern-motion extension is enabled",
+    "instruction": "Score whether the motion feels choreographed and premium (GSAP/award-site quality): intentional sequencing, easing with personality, scroll effects that enhance content, and no jank, over-animation, or motion used as decoration."
+  }
+}

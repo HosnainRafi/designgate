@@ -35,4 +35,5 @@ describe("Tier B provider abstraction", () => {
     await expect(openAICompatibleProvider.grade(images, prompt, { ...config, provider: "openai-compatible", supportsVision: false })).rejects.toThrow(/vision input/);
     expect(fetchMock).not.toHaveBeenCalled();
   });
+
 });

@@ -10,8 +10,8 @@ describe("DesignGate backend contracts", () => {
     expect(Object.keys(result.tierA)).toEqual(["fonts", "gradients", "spacing", "contrast", "responsive", "icons"]);
   });
 
-  it("keeps the report endpoint typed and returns null for an unknown run", async () => {
-    const result = await appRouter.createCaller({ user: undefined, req: {} as any, res: {} as any }).runs.report({ id: -1 });
-    expect(result).toBeNull();
+  it("keeps the report endpoint typed and rejects an inaccessible unknown run", async () => {
+    const caller = appRouter.createCaller({ user: { id: 999 } as any, req: {} as any, res: {} as any });
+    await expect(caller.runs.report({ id: 999999 })).rejects.toMatchObject({ code: "NOT_FOUND" });
   });
 });

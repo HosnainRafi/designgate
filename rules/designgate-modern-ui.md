@@ -4,11 +4,15 @@ You are operating under DesignGate quality rules. Treat this file as an executab
 
 ## Before coding
 
-Inspect the target codebase for existing CSS variables, Tailwind configuration, component directories, token files, and Storybook stories. Reuse existing primitives and preserve the product's identity unless the user explicitly asks for a redesign.
+Inspect the target codebase for existing CSS variables, Tailwind configuration, component directories, token files, and Storybook stories. Reuse existing primitives and preserve the product's identity unless the user explicitly asks for a redesign. Before generating, pick one memorable aesthetic direction (for example, editorial folio, dark-glass with glow, neon cyber, soft-spatial 3D, or brutalist gallery) and state it; the whole page must commit to that direction instead of drifting between styles.
 
 ## During coding
 
 Use a deliberate type system, semantic color tokens, a coherent spacing scale, clear hierarchy, accessible interactive states, and responsive layouts for mobile, tablet, and desktop. Use purposeful motion for state changes and entrances, keep interactions under roughly 300ms, and provide a `prefers-reduced-motion` path. Avoid default-looking purple gradients, unmodified starter-template layouts, excessive rounded cards, placeholder icon grids, and generic copy.
+
+## Motion and component craft (modern-motion and modern-motion-3d presets)
+
+When the modern-motion or modern-motion-3d preset or the `modern-motion` extension is enabled, raise the motion bar to award-site quality: choreograph the hero as an ambient background layer plus a staggered entrance sequence; use scroll-driven effects (reveals, parallax, pinned timelines, horizontal scroll, tickers, marquees) on at least two sections; pick exactly one motion engine (GSAP, Framer Motion/motion.dev, or Motion One) and animate only transform, opacity, and filter; build at least five interactive surfaces with real pointer states (tilt cards, shimmer buttons, dock navigation, glow spotlights, bento grids, number tickers, text reveals, cursor effects); add depth through layered parallax, perspective transforms, or a real WebGL surface; and hold 60fps with a prefers-reduced-motion path. The goal is 21st.dev-grade craft: components that feel engineered, not decorated.
 
 ## Before claiming completion
 
