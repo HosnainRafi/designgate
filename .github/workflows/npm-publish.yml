@@ -33,8 +33,8 @@ jobs:
         run: |
           pnpm check
           pnpm test
-          pnpm pack --dry-run --json --ignore-scripts > /tmp/pack.json
-          node -e "const fs=require('fs');const d=JSON.parse(fs.readFileSync('/tmp/pack.json','utf8'));const pkg=d[0];console.log('Pack OK:',pkg.filename);if(!pkg.files.some(f=>f.path.includes('designgate-award-typography-2026'))){console.error('Award typography contract missing from pack');process.exit(1);}if(!pkg.files.some(f=>f.path.includes('award-winners-2025-2026'))){console.error('Award winners study reference missing from pack');process.exit(1);}if(!pkg.files.some(f=>f.path.includes('award-craft-2026'))){console.error('Award-craft extension missing from pack');process.exit(1);}console.log('All award-grade contracts bundled.');"
+          pnpm pack --json > /tmp/pack.json
+          node -e "const fs=require('fs');const raw=fs.readFileSync('/tmp/pack.json','utf8');const d=JSON.parse(raw.slice(raw.indexOf('{')));const pkg=Array.isArray(d)?d[0]:d;console.log('Pack OK:',pkg.filename);if(!pkg.files.some(f=>f.path.includes('designgate-award-typography-2026'))){console.error('Award typography contract missing from pack');process.exit(1);}if(!pkg.files.some(f=>f.path.includes('award-winners-2025-2026'))){console.error('Award winners study reference missing from pack');process.exit(1);}if(!pkg.files.some(f=>f.path.includes('award-craft-2026'))){console.error('Award-craft extension missing from pack');process.exit(1);}console.log('All award-grade contracts bundled.');"
 
       - name: Check whether this version already exists on npm
         id: check
