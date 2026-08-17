@@ -19,7 +19,7 @@ Use this skill when a user asks to create, redesign, inspect, verify, or improve
    npx designgate@latest init . --agent generic --preset base
    ```
 
-   Use `react`, `nextjs`, `vue`, `component-library`, `modern-motion`, or `modern-motion-3d` when it matches the project. If the DesignGate npm package is not published or is unavailable, use the checked-out source CLI instead:
+   Use `react`, `nextjs`, `vue`, `component-library`, `modern-motion`, `modern-motion-3d`, or `premium-3d` when it matches the project. If the DesignGate npm package is not published or is unavailable, use the checked-out source CLI instead:
 
    ```bash
    node /path/to/designgate/cli/designgate.mjs init . --agent generic --preset base
@@ -72,4 +72,10 @@ npx designgate@latest init . --agent generic --preset modern-motion
 
 Use `modern-motion` for motion without real-time 3D and `modern-motion-3d` when a WebGL/Three.js surface is also wanted. Both presets register the additive `modern-motion` extension, which adds five Tier A checks (motion library evidence, choreography evidence, reduced-motion fallback, animated pointer states, scroll-safe choreography) and a sixth Tier B dimension, `motionCraft` (worth 20% of the vision grade), scored for sequenced entrances, scroll-driven effects, easing personality, 60fps feel, and the absence of jank or over-animation.
 
-Goal Mode supports `gaming`, `portfolio`, and `ecommerce`. Unknown categories must fail explicitly. The generated goal brief and Phase-0 project context must be passed to the generator before its first attempt. When `immersive3d` is active, preserve the canvas/WebGL, supported-dependency, depth, interaction, performance, and conditional `immersiveness` evidence in the report. When the `modern-motion` extension is active, preserve the motion library, choreography, reduced-motion, pointer-state, and scroll-safe evidence in the report. Legacy projects without a preset continue to use the standard rules and five Tier B dimensions.
+For the highest-end, awwwards-grade build — cinematic animated heroes, scroll storytelling, grain and noise textures, smooth scrolling (Lenis / GSAP ScrollSmoother / Locomotive), and components from curated premium registries (Aceternity UI, Magic UI, ReactBits, 21st.dev, shadcn/ui) — use the `premium-3d` preset. It registers both the `modern-motion` and `premium-stack` extensions and adds the Tier B `premiumCraft` dimension (10%, with `motionCraft` at 10%) scored for component polish, surface depth, texture and material quality, and finish:
+
+```bash
+npx designgate@latest init . --agent generic --preset premium-3d
+```
+
+Goal Mode supports `gaming`, `portfolio`, and `ecommerce`. Unknown categories must fail explicitly. The generated goal brief and Phase-0 project context must be passed to the generator before its first attempt. When `immersive3d` is active, preserve the canvas/WebGL, supported-dependency, depth, interaction, performance, and conditional `immersiveness` evidence in the report. When the `modern-motion` extension is active, preserve the motion library, choreography, reduced-motion, pointer-state, and scroll-safe evidence in the report. When the `premium-stack` extension is active, preserve the premium-library, WebGL/3D, smooth-scroll, texture/grain, and RAF-based handling evidence in the report. Legacy projects without a preset continue to use the standard rules and five Tier B dimensions.

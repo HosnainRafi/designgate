@@ -31,10 +31,27 @@ export function Hero() {
 );
 writeFileSync(
   join(fakeProject, "client/src/styles/globals.css"),
-  `:root { --color-surface: #0b0d12; --color-ink: #f5f7fa; --color-accent: #7c5cff; }\n@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }\n@media (min-width: 768px) { .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; padding: 4rem; } }\n`
+  `:root { --color-surface: #0b0d12; --color-ink: #f5f7fa; --color-accent: #7c5cff; }\n@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }\n@media (min-width: 768px) { .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; padding: 4rem; } }\n@font-face { font-family: "Fraunces"; }\nbody { font-family: "Fraunces", serif; }\nbutton:focus-visible { outline: 2px solid var(--color-accent); }\n.card { transition: transform 250ms cubic-bezier(.2,.8,.2,1); background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), #1a1d25, #0b0d12); }\n.grain::after { content: ""; position: fixed; inset: 0; pointer-events: none; filter: url(#noise-filter); opacity: .05; }\n`);
+writeFileSync(
+  join(fakeProject, "client/src/components/CanvasScene.tsx"),
+  `import { Canvas } from "@react-three/fiber";
+import Lenis from "lenis";
+import { requestAnimationFrame } from "./raf";
+export function CanvasScene() { return <Canvas><mesh/></Canvas>; }
+export function smoothScroll() { new Lenis({ duration: 1.2 }); }
+export function tick() { requestAnimationFrame(tick); }`
+);
+writeFileSync(
+  join(fakeProject, "client/src/raf.ts"),
+  `export const requestAnimationFrame = window.requestAnimationFrame.bind(window);\nexport const cancelAnimationFrame = window.cancelAnimationFrame.bind(window);\n`
+);
+writeFileSync(
+  join(fakeProject, "client/src/components/Card.tsx"),
+  `import { Button } from "@/components/ui/button";
+export function Card() { return <button aria-label="Learn more" className="card"><Button>Go</Button></button>; }\n`
 );
 
-const presets = ["modern-motion", "modern-motion-3d"];
+const presets = ["modern-motion", "modern-motion-3d", "premium-3d"];
 for (const preset of presets) {
   console.log(`\n=== init with preset ${preset} ===`);
   rmSync(join(fakeProject, ".designgate"), { recursive: true, force: true });

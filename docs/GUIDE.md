@@ -206,6 +206,7 @@ npx designgate@latest init . --agent generic --preset vue
 npx designgate@latest init . --agent generic --preset component-library
 npx designgate@latest init . --agent generic --preset modern-motion
 npx designgate@latest init . --agent generic --preset modern-motion-3d
+npx designgate@latest init . --agent generic --preset premium-3d
 npx designgate@latest rules .
 ```
 
@@ -400,3 +401,19 @@ DesignGate’s modern motion support is a second **additive, opt-in extension**.
 When the extension is active, `verify` and `grade` add a sixth Tier B dimension, `motionCraft` (weight 0.2, matching the pattern used by the `immersiveness` dimension), scored for sequenced entrances, easing personality, scroll-driven effects that enhance content, 60fps feel, and the absence of jank or over-animation. The companion preset rules (the `MM-*` IDs in `rules/presets/modern-motion.json` and `rules/presets/modern-motion-3d.json`) carry the positive direction: animated hero centerpiece, scroll storytelling on two or more sections, glow and depth language, 21st.dev-grade interactive surfaces, and single-engine motion discipline.
 
 > **Opt-in and backward compatibility:** projects without the `modern-motion` extension or preset configuration continue to use the standard rule set and five Tier B dimensions unchanged. Legacy `immersive3d` runs remain unaffected.
+
+### Premium stack extension
+
+DesignGate’s premium stack support is a third **additive, opt-in extension**, bundled into the `premium-3d` preset alongside the modern-motion and immersive3d rules. Activate it with `--preset premium-3d`, or with `extensions.premium-stack.enabled: true`. The extension manifest in `rules/extensions/premium-stack.json` adds these deterministic rule IDs:
+
+| Rule ID | Verifier |
+| --- | --- |
+| `DG-PREMIUM-EXT-001` | Curated premium library components or bespoke equivalents (Aceternity UI, Magic UI, ReactBits, 21st.dev, shadcn/ui) |
+| `DG-PREMIUM-EXT-002` | WebGL/3D/shader depth surfaces (Three.js, React Three Fiber, Canvas, shader or perspective evidence) |
+| `DG-PREMIUM-EXT-003` | Smooth-scroll library configured (Lenis, GSAP ScrollSmoother, Locomotive Scroll) |
+| `DG-PREMIUM-EXT-004` | Texture craft, signature accent color, or branded cursor evidence (grain, noise, feTurbulence, accent tokens) |
+| `DG-PREMIUM-EXT-005` | RAF-based or throttled scroll/canvas handling |
+
+When the extension is active, `verify` and `grade` add a seventh Tier B dimension, `premiumCraft` (weight 0.1, alongside `motionCraft` at 0.1), scored for component polish, surface depth, texture and material quality, and finish. The companion preset rules in `rules/presets/premium-3d.json` carry the positive direction: cinematic animated heroes, scroll-driven storytelling, magnetic interactive surfaces, grain and noise overlays, glow depth, and 60fps rendering discipline.
+
+> **Opt-in and backward compatibility:** projects without the `premium-3d` preset or `premium-stack` extension configuration continue to use the standard rule set and existing Tier B dimensions unchanged.

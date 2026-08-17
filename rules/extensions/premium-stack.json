@@ -1,0 +1,44 @@
+{
+  "id": "premium-stack",
+  "name": "Premium Stack Craft",
+  "version": "1.0.0",
+  "description": "Additive deterministic checks for the 2026 premium-website stack: curated motion/component libraries, WebGL/3D surfaces, smooth-scroll hygiene, and texture/detail craft that signal a high-value build.",
+  "ruleExtensions": [
+    {
+      "id": "DG-PREMIUM-EXT-001",
+      "category": "premiumStack",
+      "required": true,
+      "instruction": "The project must draw components from at least one curated premium library (21st.dev, Aceternity UI, Magic UI, ReactBits, or shadcn/ui) or implement equivalent bespoke components in the same style; copy-paste-only output with zero customization fails this check."
+    },
+    {
+      "id": "DG-PREMIUM-EXT-002",
+      "category": "premiumStack",
+      "required": true,
+      "instruction": "At least one depth surface must exist: WebGL/Three.js scene, R3F Canvas, shader background (shadcn shader, animated gradient mesh, or canvas shader), or layered 3D transforms; flat single-layer backgrounds are insufficient."
+    },
+    {
+      "id": "DG-PREMIUM-EXT-003",
+      "category": "premiumStack",
+      "required": true,
+      "instruction": "A smooth-scroll solution (Lenis, GSAP ScrollSmoother, or Locomotive Scroll) must be configured when scroll choreography is used, so scrolling feels weighted and continuous rather than stepped."
+    },
+    {
+      "id": "DG-PREMIUM-EXT-004",
+      "category": "premiumStack",
+      "required": true,
+      "instruction": "Texture craft must be present: subtle grain/noise overlay (CSS or SVG, animated or static), a signature accent color used sparingly for CTAs, or a branded cursor with hover states; none of these means the site reads as generic."
+    },
+    {
+      "id": "DG-PREMIUM-EXT-005",
+      "category": "premiumStack",
+      "required": true,
+      "instruction": "Performance hygiene must be enforced: canvas/WebGL renders inside requestAnimationFrame, scroll handlers are throttled or RAF-based, WebGL fallbacks exist for unsupported devices, and no animation forces layout thrash on scroll."
+    }
+  ],
+  "tierB": {
+    "name": "premiumCraft",
+    "weight": 0.2,
+    "condition": "only scored when the premium-stack extension is enabled",
+    "instruction": "Score whether the build reads as premium and high-value: curated library components integrated with brand coherence, depth and texture that feel intentional, buttery smooth scroll feel, physics-based micro-interactions (magnetic cursor/buttons, lerp easing, edge-only magnetism), and restraint so motion serves the message."
+  }
+}
