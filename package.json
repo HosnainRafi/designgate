@@ -4,45 +4,14 @@
   "type": "module",
   "license": "MIT",
   "description": "Installable design quality rules, browser rendering, and verification loops for any coding agent.",
-  "keywords": [
-    "ai-agents",
-    "design-system",
-    "ui-quality",
-    "playwright",
-    "cli",
-    "code-review"
-  ],
-  "engines": {
-    "node": ">=20"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/HosnainRafi/designgate.git"
-  },
-  "bugs": {
-    "url": "https://github.com/HosnainRafi/designgate/issues"
-  },
+  "keywords": ["ai-agents", "design-system", "ui-quality", "playwright", "cli", "code-review"],
+  "engines": {"node": ">=20"},
+  "publishConfig": {"access": "public"},
+  "repository": {"type": "git", "url": "https://github.com/HosnainRafi/designgate.git"},
+  "bugs": {"url": "https://github.com/HosnainRafi/designgate/issues"},
   "homepage": "https://github.com/HosnainRafi/designgate#readme",
-  "bin": {
-    "designgate": "cli/designgate.mjs"
-  },
-  "files": [
-    "cli",
-    "grader",
-    "rules",
-    "config",
-    "adapters",
-    "templates",
-    "scripts",
-    "docs",
-    "README.md",
-    "LICENSE",
-    "SKILL.md",
-    "designgate.config.json"
-  ],
+  "bin": {"designgate": "cli/designgate.mjs"},
+  "files": ["cli", "grader", "rules", "config", "adapters", "templates", "scripts", "docs", "README.md", "LICENSE", "SKILL.md", "designgate.config.json"],
   "scripts": {
     "dev": "NODE_ENV=development tsx watch server/_core/index.ts",
     "build": "vite build && esbuild server/_core/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
