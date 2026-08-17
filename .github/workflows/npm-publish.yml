@@ -63,14 +63,12 @@ jobs:
           echo "version=${NEW}" >> "$GITHUB_OUTPUT"
           echo "tag=v${NEW}" >> "$GITHUB_OUTPUT"
 
-      - name: Push version bump and tag (temporarily relax branch protection)
+      - name: Push version bump and tag
         if: steps.check.outputs.skip != 'true'
-        uses: CasperWA/push-protected@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
-          unprotect_reviews: true
-          tags: true
+        run: |
+          git push "https://x-access-token:${PUSH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "${GITHUB_REF}:refs/heads/main" --follow-tags
+        env:
+          PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
 
       - name: Publish to npm
         if: steps.check.outputs.skip != 'true'
