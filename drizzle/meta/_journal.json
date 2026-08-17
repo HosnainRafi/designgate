@@ -22,13 +22,6 @@
       "when": 1786885463087,
       "tag": "0002_short_mordo",
       "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1786896902422,
-      "tag": "0003_naive_pepper_potts",
-      "breakpoints": true
     }
   ]
 }

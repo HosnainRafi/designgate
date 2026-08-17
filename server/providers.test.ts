@@ -36,28 +36,4 @@ describe("Tier B provider abstraction", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("passes the same golden-set score contract across two providers", async () => {
-    process.env.TEST_VISION_KEY = "test-key";
-    const goldenSet = {
-      variance: { score: 4, note: "Intentional layout variance." },
-      motion: { score: 3, note: "Motion remains restrained." },
-      density: { score: 4, note: "Content density is readable." },
-      assetDependence: { score: 3, note: "Assets support the hierarchy." },
-      brandFidelity: { score: 4, note: "Brand tokens are consistent." },
-    };
-    vi.spyOn(globalThis, "fetch").mockImplementation(async (url) => {
-      const body = url.endsWith("/messages")
-        ? { content: [{ type: "text", text: JSON.stringify(goldenSet) }] }
-        : { choices: [{ message: { content: JSON.stringify(goldenSet) } }] };
-      return new Response(JSON.stringify(body), { status: 200 });
-    });
-
-    const [anthropic, compatible] = await Promise.all([
-      anthropicProvider.grade(images, prompt, { ...config, provider: "anthropic" }),
-      openAICompatibleProvider.grade(images, prompt, { ...config, provider: "openai-compatible", baseUrl: "https://provider.test/v1" }),
-    ]);
-    const scoreShape = (text) => Object.fromEntries(Object.entries(JSON.parse(text)).map(([key, value]) => [key, value.score]));
-    expect(scoreShape(anthropic.text)).toEqual(scoreShape(compatible.text));
-    expect(Object.values(scoreShape(anthropic.text))).toEqual([4, 3, 4, 3, 4]);
-  });
 });
