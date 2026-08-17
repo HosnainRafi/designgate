@@ -1,0 +1,29 @@
+{
+  "id": "premium-3d",
+  "name": "Premium 3D Experience",
+  "version": "1.0.0",
+  "description": "The high-value 2026 stack: WebGL depth surfaces, curated motion libraries, smooth scroll, physics micro-interactions, and texture craft — the combination seen on Awwwards winners and premium agency work. Use for portfolio, agency, product-launch, and any site where visual polish is the selling point.",
+  "type": "preset",
+  "rules": ["designgate-modern-ui.md"],
+  "extensions": ["modern-motion", "immersive3d", "premium-stack"],
+  "baseRules": {
+    "DG-MOTION-002": false,
+    "DG-DEPTH-002": false,
+    "DG-COMP-002": false,
+    "DG-PREMIUM-EXT-001": true,
+    "DG-PREMIUM-EXT-002": true,
+    "DG-PREMIUM-EXT-003": true,
+    "DG-PREMIUM-EXT-004": true,
+    "DG-PREMIUM-EXT-005": true,
+    "DG-MOTION-001": true,
+    "DG-MOTION-EXT-001": true,
+    "DG-MOTION-EXT-002": true,
+    "DG-MOTION-EXT-003": true,
+    "DG-MOTION-EXT-004": true,
+    "DG-MOTION-EXT-005": true,
+    "DG-3D-001": true,
+    "DG-3D-002": true,
+    "DG-3D-003": true
+  },
+  "prompt": "Build this site as a premium 2026 experience. Stack: React + Three.js/React Three Fiber for depth surfaces (shader backgrounds, morphing 3D scenes, product configurators), GSAP + ScrollTrigger for choreographed scroll storytelling (scrub, pin, snap, multi-phase hero timelines), Lenis for weighted smooth scrolling, plus curated components from 21st.dev / Aceternity UI / Magic UI / ReactBits adapted to the brand (sparkles, border beam, marquee, bento, number tickers, spotlight cursor, dot/grid patterns). Micro-interactions must feel physical: magnetic buttons (force rises gradually with distance, lerp ~0.15 cursor easing, edge-only magnetism on large cards, element scale ~2% when pulled), physics-based custom cursor with context states, and animated grain/noise overlay for organic texture. Every effect gets a prefers-reduced-motion fallback, RAF-based scroll handling, WebGL fallbacks for unsupported devices, and touch-device early exits. One signature accent color drives all CTAs. Prefer restraint: motion serves the message, and the site must stay at 60fps on mid-range hardware."
+}
