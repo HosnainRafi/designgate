@@ -1,0 +1,87 @@
+name: Auto-publish to npm
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enable pnpm
+        uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate the tree
+        run: pnpm check && pnpm test && pnpm pack --dry-run --json --ignore-scripts | node -e "const data = JSON.parse(require('fs').readFileSync(0, 'utf8')); const pkg = data[0]; console.log('Pack OK:', pkg.filename); if (!pkg.files.some(f => f.path.includes('designgate-award-typography-2026'))) process.exit(1);"
+
+      - name: Check whether this version already exists on npm
+        id: check
+        run: |
+          CURRENT=$(node -p "require('./package.json').version")
+          EXISTS=$(npm view designgate@${CURRENT} version 2>/dev/null || true)
+          if [ "$EXISTS" = "$CURRENT" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Already published: ${CURRENT}, skipping release job."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bump patch version and tag
+        if: steps.check.outputs.skip != 'true'
+        id: bump
+        run: |
+          CURRENT=$(node -p "require('./package.json').version")
+          NEW=$(echo "$CURRENT" | awk -F. '{printf "%d.%d.%d", $1, $2, $3+1}')
+          node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json'));p.version='${NEW}';fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n');"
+          git config user.name "designgate-bot"
+          git config user.email "82991389+HosnainRafi@users.noreply.github.com"
+          git add package.json
+          git commit -m "chore(release): npm ${NEW}"
+          git tag "v${NEW}"
+          echo "version=${NEW}" >> "$GITHUB_OUTPUT"
+          echo "tag=v${NEW}" >> "$GITHUB_OUTPUT"
+
+      - name: Push version bump and tag
+        if: steps.check.outputs.skip != 'true'
+        run: git push origin main --follow-tags
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to npm
+        if: steps.check.outputs.skip != 'true'
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub release
+        if: steps.check.outputs.skip != 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.bump.outputs.version }}
+          release_name: v${{ steps.bump.outputs.version }}
+          body: |
+            Automated release synced with `main`.
+
+            Includes the 2026 award-grade design contracts: the DesignGate Award Typography Contract 2026 (DG-TYPO-002, five approved type systems incl. Kinetic Maximalist), the award-craft extension, and the verified 2025–2026 award-winners study reference.
+          draft: false
+          prerelease: false

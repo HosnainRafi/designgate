@@ -75,9 +75,13 @@ The application must keep **run configurations and rubric configurations in the 
 | CI fails on `verify-ui` | The workflow cannot reach `DESIGNGATE_TARGET`, or verification failed. | Review the artifact report; configure a safely reachable preview URL; correct exact required failures. |
 | Agent instructions look stale | The project has an older manifest or a modified managed block. | Rerun `init` with the desired adapter/preset, then inspect the managed sections and manifest hashes. |
 
-## npm release procedure
+## npm release procedure (automatic)
 
-The repository is prepared for a public npm package, but publishing requires an npm account authorized to publish the package name. Do not treat a local `pnpm pack` success as evidence that `npx designgate@latest` is available to the public.
+Publishing is now **automatic**: the `npm-publish` workflow (`.github/workflows/npm-publish.yml`) runs on every push to `main`. It validates the tree (`pnpm check`, `pnpm test`, and a `pnpm pack` dry run that asserts the award-grade contracts are bundled), skips the job when the current version already exists on the registry, bumps the patch version, pushes the bump commit and a `v{version}` tag, publishes to npm as public, and creates a GitHub release from the tag. Merging a pull request into `main` is the only manual step; `npx designgate@latest` reflects the new contracts within minutes.
+
+The workflow requires one repository secret, `NPM_TOKEN`: an npm access token for the `designgate` package authorized to publish. Create one at [npmjs.com → Access Tokens](https://www.npmjs.com/settings/tokens) (Automation type, or a Classic token with publish permission), then add it under [Settings → Secrets and variables → Actions](https://github.com/HosnainRafi/designgate/settings/secrets/actions). Until the secret is set, merges to `main` still pass CI and stay tagged-ready; only the publish step is skipped.
+
+The repository is also prepared for a manual public npm package, which requires an npm account authorized to publish the package name. Do not treat a local `pnpm pack` success as evidence that `npx designgate@latest` is available to the public.
 
 ```bash
 pnpm install --frozen-lockfile
