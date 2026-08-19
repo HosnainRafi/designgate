@@ -42,16 +42,16 @@ jobs:
           pnpm pack --json > /tmp/pack.json
           node -e "const fs=require('fs');const raw=fs.readFileSync('/tmp/pack.json','utf8');const d=JSON.parse(raw.slice(raw.indexOf('{')));const pkg=Array.isArray(d)?d[0]:d;console.log('Pack OK:',pkg.filename);if(!pkg.files.some(f=>f.path.includes('designgate-award-typography-2026'))){console.error('Award typography contract missing from pack');process.exit(1);}if(!pkg.files.some(f=>f.path.includes('award-winners-2025-2026'))){console.error('Award winners study reference missing from pack');process.exit(1);}if(!pkg.files.some(f=>f.path.includes('award-craft-2026'))){console.error('Award-craft extension missing from pack');process.exit(1);}console.log('All award-grade contracts bundled.');"
 
-      - name: Check whether this version already exists on npm
+      - name: Determine the next patch release
         id: check
         run: |
           CURRENT=$(node -p "require('./package.json').version")
           EXISTS=$(npm view designgate@${CURRENT} version 2>/dev/null || true)
+          echo "skip=false" >> "$GITHUB_OUTPUT"
           if [ "$EXISTS" = "$CURRENT" ]; then
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo "Already published: ${CURRENT}, skipping bump."
+            echo "Current version ${CURRENT} is already published; creating the next patch release."
           else
-            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "Current version ${CURRENT} is not published; creating the next patch release."
           fi
 
       - name: Bump patch version, commit, and tag
