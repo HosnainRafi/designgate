@@ -138,9 +138,14 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Push release tag
+      - name: Create and push release tag
         if: steps.check.outputs.skip != 'true'
-        run: git push origin "v${{ steps.check.outputs.version }}"
+        run: |
+          VERSION="${{ steps.check.outputs.version }}"
+          git config user.name "designgate-bot"
+          git config user.email "82991389+HosnainRafi@users.noreply.github.com"
+          git tag -a "v${VERSION}" -m "Release v${VERSION}" "$(git rev-parse HEAD)"
+          git push origin "v${VERSION}"
 
       - name: Create GitHub release
         if: steps.check.outputs.skip != 'true'
