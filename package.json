@@ -55,6 +55,8 @@
     "designgate": "node cli/designgate.mjs",
     "designgate:verify": "node cli/designgate.mjs verify .",
     "designgate:render": "node cli/designgate.mjs render",
+    "designgate:image-to-code": "node cli/designgate.mjs image-to-code",
+    "designgate:vercel-fetch-rules": "node cli/designgate.mjs vercel:fetch-rules",
     "prepack": "pnpm check && pnpm test",
     "pack:dry-run": "npm pack --dry-run",
     "release:check": "pnpm check && pnpm test && npm run release:pack-json --silent",

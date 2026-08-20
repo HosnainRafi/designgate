@@ -1,0 +1,64 @@
+{
+  "id": "vercel-interface-guidelines",
+  "name": "Vercel Web Interface Guidelines",
+  "version": "1.0.0",
+  "description": "Deterministic checks for Vercel Web Interface Guidelines compliance: accessibility, focus management, forms, animation, typography craft, image discipline, performance, interaction safety, and anti-pattern detection. Bundled snapshot of vercel-labs/web-interface-guidelines fetched from https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md",
+  "upstreamSource": "https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md",
+  "ruleExtensions": [
+    {
+      "id": "DG-VERCEL-001",
+      "category": "accessibility",
+      "required": true,
+      "instruction": "Every icon-only button must carry an aria-label, every form control must have a visible label or aria-label, interactive surfaces must use <button> or <a>/<Link> rather than <div onClick>, and images must declare alt or aria-hidden for decorative icons.",
+      "hash": "sha256:b7b5035d4feabc50698c6fd121c7c3c19c67158a76ba6556fbc14d5ae492f053"
+    },
+    {
+      "id": "DG-VERCEL-002",
+      "category": "focus",
+      "required": true,
+      "instruction": "Interactive elements must expose a visible focus-visible indicator such as focus-visible:ring-* or an equivalent; outline:none is only allowed when paired with a focus-visible replacement, and sticky or overlay surfaces must never cover the focused element.",
+      "hash": "sha256:f8a7b35243f8f37a873606c47ca182b386ca3b87b82b82685cfbf483b65b863e"
+    },
+    {
+      "id": "DG-VERCEL-003",
+      "category": "animation",
+      "required": true,
+      "instruction": "Motion must honor prefers-reduced-motion, animate only transform/opacity with explicitly listed properties (never transition: all), and interactive animations must remain interruptible mid-animation.",
+      "hash": "sha256:dd809cf4c7b434aa64f3c269291b0b04bdbbc3d508e2d25e412ee5fdb6f418ed"
+    },
+    {
+      "id": "DG-VERCEL-004",
+      "category": "images",
+      "required": true,
+      "instruction": "Every <img> must declare explicit width and height to prevent layout shift, below-fold images must use loading=\"lazy\", and critical above-fold images must use priority or fetchpriority=\"high\".",
+      "hash": "sha256:2e7d88e96809cfdb8959ebd21b787edbeb803b6e5634334106e59a41d68b8ae8"
+    },
+    {
+      "id": "DG-VERCEL-005",
+      "category": "performance",
+      "required": false,
+      "instruction": "Lists larger than fifty items must be virtualized or use content-visibility:auto, critical fonts must preload with font-display:swap, render must not read layout properties like getBoundingClientRect or offsetHeight, and text overflow must be handled with truncate, line-clamp, break-words, or min-w-0 on flex children.",
+      "hash": "sha256:a7cc12ccd48612aa6bb020eb58ce1c0bcc1eca6ae063905ab6cc5c5ea764c48e"
+    },
+    {
+      "id": "DG-VERCEL-006",
+      "category": "interaction",
+      "required": false,
+      "instruction": "Touch surfaces must declare touch-action:manipulation, modals and sheets must use overscroll-behavior:contain, destructive actions must require confirmation or undo, and any drag/swipe/pinch gesture must also have a tap/click and keyboard alternative.",
+      "hash": "sha256:24cc53871ee8bcd023916cad94bfeb11757d8047ae3e2be6f44222b57182eb05"
+    },
+    {
+      "id": "DG-VERCEL-007",
+      "category": "localization",
+      "required": false,
+      "instruction": "Dates and numbers must format through Intl.DateTimeFormat and Intl.NumberFormat rather than hardcoded strings, and the UI must include an intentional empty state rather than rendering broken layouts for empty data.",
+      "hash": "sha256:eeece3cdb567fc81a8910bd3cdade32bfe0f60890e6c0134cf5142bea648f811"
+    }
+  ],
+  "tierB": {
+    "name": "vercelCraft",
+    "weight": 0.15,
+    "condition": "only scored when the vercel-interface-guidelines extension is enabled",
+    "instruction": "Score whether the interface follows Vercel-grade product discipline: crisp focus and hover states, correct a11y semantics, compositor-friendly motion with reduced-motion behavior, disciplined image and typography craft, and no flagged anti-patterns such as disabled zoom, unlabeled inputs, or transition: all."
+  }
+}

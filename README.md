@@ -50,6 +50,8 @@ npx designgate@latest loop . \
 | [Scaling Roadmap](docs/SCALING.md) | Modular CLI target, queue workers, S3, database, vision-grading, security, observability, CI, references, and licensing boundaries. |
 | [Operations and Release Guide](docs/OPERATIONS.md) | Evidence import, troubleshooting, npm publishing, GitHub operations, validation, and branch protection. |
 | [No-Cost Team Operations](docs/TEAM_OPERATIONS.md) | Workspace/project isolation, scoped roles, reviews, audit trail, manual retention, quotas, and the user-triggered execution model. |
+| [Image to Code](docs/IMAGE_TO_CODE.md) | `image-to-code` command: convert a design screenshot into a production-ready React component through the vision provider, with design-token extraction, responsive adaptation, accessibility enforcement, and optional Tier A/Tier B grading of the regenerated target. |
+| [Vercel Interface Guidelines](docs/VERCEL_INTERFACE_GUIDELINES.md) | The `vercel-interface-guidelines` extension packaging the latest official Vercel Web Interface Guidelines as seven verifiable rules (DG-VERCEL-001 to DG-VERCEL-007) plus the `vercel:fetch-rules` refresh command. |
 
 For traceable source material used by the AutoClaw integration guide, see [research notes](docs/research-sources.md).
 
@@ -244,3 +246,29 @@ npx designgate@latest build "Build a marketing site with an animated hero and sc
 | `premium-3d` | Motion + 3D rules plus the `premium-stack` extension: curated component libraries (Aceternity UI, Magic UI, ReactBits, 21st.dev, shadcn/ui), smooth scrolling (Lenis, GSAP ScrollSmoother, Locomotive Scroll), texture/grain craft, and RAF-driven scroll/canvas handling | High-end, awwwards-grade premium sites where 3D, motion, and component polish all matter |
 
 The extension verifies a real motion library import (GSAP, Framer Motion/motion.dev, or Motion One), visible choreography evidence, a `prefers-reduced-motion` fallback, animated pointer states, and scroll-safe mobile behavior. The `premium-3d` preset additionally activates the `premium-stack` extension, which checks that projects draw on curated premium component libraries, configure smooth scrolling, craft textures and grain rather than flat backgrounds, and drive scroll and canvas work inside `requestAnimationFrame`. The Tier B `premiumCraft` dimension (10%, alongside 10% `motionCraft`) grades component polish, surface depth, and finish. The Tier B `motionCraft` score judges sequencing, easing personality, scroll-driven effects that enhance content, and the absence of jank or over-animation. The supported Goal Mode categories are `gaming`, `portfolio`, and `ecommerce`; unknown categories fail explicitly. Projects that do not enable any extension retain the legacy behavior. See [`docs/GUIDE.md`](docs/GUIDE.md) for the complete contract.
+
+## Vercel Web Interface Guidelines extension
+
+DesignGate ships an additive `vercel-interface-guidelines` extension that packages the latest official [Vercel Web Interface Guidelines](https://github.com/vercel-labs/web-interface-guidelines) (accessibility, focus management, motion discipline, image performance, and rendering performance) as seven verifiable rules, `DG-VERCEL-001` through `DG-VERCEL-007`. It also contributes a `vercelCraft` Tier B dimension weighted at 15% of the vision grade:
+
+```bash
+npx designgate@latest init . --agent claude-code
+# Enable the extension in designgate.config.json, then run:
+npx designgate@latest verify .
+```
+
+Enable the extension by setting `extensions["vercel-interface-guidelines"].enabled` to `true` in the project's `designgate.config.json`, and every `init`, `verify`, `grade`, and `loop` run will enforce the Vercel contracts alongside the base rules. When Vercel publishes updated guidelines, pull the freshest rules into the package with `npx designgate@latest vercel:fetch-rules` (also available as `npm run designgate:vercel-fetch-rules`). Full details in [`docs/VERCEL_INTERFACE_GUIDELINES.md`](docs/VERCEL_INTERFACE_GUIDELINES.md).
+
+## Image to code
+
+DesignGate converts design screenshots into production-ready React components with `image-to-code`. The command sends the screenshot to the configured vision provider, which emits a single default-export component that faithfully reproduces the layout, typography, spacing, color tokens, and copy from the design, with responsive adaptation, accessible interactive surfaces, and `prefers-reduced-motion` handling:
+
+```bash
+# Render the target first so you have a real capture, then convert a design screenshot.
+npx designgate@latest render ./mockup/index.html --project .
+npx designgate@latest image-to-code ./design.png --project . --target ./mockup/index.html
+# Optionally grade the regenerated target with Tier A checks and Tier B vision grading.
+npx designgate@latest image-to-code ./design.png --project . --target ./mockup/index.html --grade
+```
+
+The same Anthropic/OpenAI-compatible configuration as Tier B grading is reused, and with `--grade` the regenerated target is captured and scored inline. See [`docs/IMAGE_TO_CODE.md`](docs/IMAGE_TO_CODE.md) for the full contract and configuration.
