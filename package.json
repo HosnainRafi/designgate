@@ -1,6 +1,6 @@
 {
   "name": "designgate",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "type": "module",
   "license": "MIT",
   "description": "Installable design quality rules, browser rendering, and verification loops for any coding agent.",
